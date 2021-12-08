@@ -1,8 +1,6 @@
 package component;
 
-import bean.Customer;
 import ui.ClubFrameView;
-import ui.EditMemberDialogView;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -25,28 +23,61 @@ import java.util.List;
 public abstract class MyTable {
   protected final DefaultTableModel tableModel = new DefaultTableModel();
   protected ClubFrameView clubFrameView;
+  protected JPanel title;
   protected JScrollPane jScrollPane;
   protected JToolBar jToolBar;
   protected JTable jTable;
   protected JTextField searchTextField;
   protected String[] columns;
-  protected String[][] data;
+  protected Object[][] data;
   protected Box searchBox;
   protected int[] filterColumns;
   protected JToolBar filterBar;
+  protected boolean selectMode;
+  protected int selectIndex;
 
   public MyTable(
-      ClubFrameView clubFrameView, String[] columns, String[][] data, int[] filterColumns) {
+      ClubFrameView clubFrameView,
+      String title,
+      String[] columns,
+      Object[][] data,
+      int[] filterColumns) {
     this.clubFrameView = clubFrameView;
     this.columns = columns;
     this.data = data;
     this.filterColumns = filterColumns;
 
+    initTitle(title);
     initToolBar();
     initFilterBar();
     initTable();
     initScrollPane();
     initListeners();
+  }
+
+  public MyTable(
+      String title,
+      String[] columns,
+      Object[][] data,
+      int[] filterColumns,
+      boolean selectMode,
+      int selectIndex) {
+    this.columns = columns;
+    this.data = data;
+    this.filterColumns = filterColumns;
+    this.selectMode = selectMode;
+    this.selectIndex = selectIndex;
+
+    initTitle(title);
+    initToolBar();
+    initFilterBar();
+    initTable();
+    initScrollPane();
+    initListeners();
+  }
+
+  public JPanel getTitle() {
+    return title;
   }
 
   public JScrollPane getjScrollPane() {
@@ -59,6 +90,17 @@ public abstract class MyTable {
 
   public JToolBar getFilterBar() {
     return filterBar;
+  }
+
+  private void initTitle(String title) {
+    var header = new JLabel(title);
+    header.setFont(new Font(null, Font.BOLD, 20));
+    header.setForeground(Color.WHITE);
+
+    this.title = new JPanel();
+    this.title.setBackground(Color.decode("#2196F3"));
+    this.title.setForeground(Color.WHITE);
+    this.title.add(header);
   }
 
   private void initToolBar() {
@@ -82,7 +124,7 @@ public abstract class MyTable {
     this.filterBar.setLayout(new BoxLayout(this.filterBar, BoxLayout.Y_AXIS));
     this.filterBar.setFloatable(false);
     this.filterBar.setPreferredSize(null);
-    this.filterBar.setBorder(BorderFactory.createEmptyBorder(10,5,10,0));
+    this.filterBar.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 0));
     this.filterBar.setVisible(false);
 
     addComponentsToFilterBar();
@@ -93,6 +135,16 @@ public abstract class MyTable {
   protected abstract void addComponentsToFilterBar();
 
   private void initTable() {
+    this.jTable =
+        new JTable(this.tableModel) {
+          @Override
+          public boolean isCellEditable(int row, int column) {
+            return selectMode && column == selectIndex;
+          }
+        };
+    this.jTable.setDragEnabled(false);
+    this.jTable.getTableHeader().setReorderingAllowed(false);
+    this.jTable.setRowSorter(new TableRowSorter<TableModel>(this.tableModel));
     bindData();
     setTableStyle();
   }
@@ -112,22 +164,32 @@ public abstract class MyTable {
     defaultTableHeaderRenderer.setHorizontalAlignment(SwingConstants.CENTER);
     Arrays.stream(columns)
         .forEachOrdered(
-            e ->
+            e -> {
+              if ("Select".equals(e)) {
+                JCheckBox checkBox = new JCheckBox();
+                checkBox.setVisible(false);
+                jTable.getColumn(e).setCellEditor(new DefaultCellEditor(checkBox));
+              }
+              if (selectMode) {
                 jTable
                     .getColumn(e)
                     .setCellRenderer(
-                        new MyTableCellRender(this.searchTextField, this.filterColumns)));
+                        new MyTableCellRender(
+                            this.searchTextField,
+                            this.filterColumns,
+                            this.selectMode,
+                            this.selectIndex));
+              } else {
+                jTable
+                    .getColumn(e)
+                    .setCellRenderer(
+                        new MyTableCellRender(this.searchTextField, this.filterColumns));
+              }
+            });
   }
 
   private void bindData() {
     tableModel.setDataVector(data, columns);
-    this.jTable =
-        new JTable(this.tableModel) {
-          @Override
-          public boolean isCellEditable(int row, int column) {
-            return false;
-          }
-        };
   }
 
   private void initScrollPane() {
@@ -175,7 +237,7 @@ public abstract class MyTable {
                 TableRowSorter<TableModel> sorter = new TableRowSorter<>(jTable.getModel());
                 String text = searchTextField.getText();
                 if (text.trim().length() == 0) {
-                  jTable.setRowSorter(null);
+                  jTable.setRowSorter(new TableRowSorter<>(jTable.getModel()));
                   return;
                 }
                 sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, filterColumns));
@@ -191,20 +253,37 @@ public abstract class MyTable {
   private static class MyTableCellRender extends DefaultTableCellRenderer {
     private final JTextField searchField;
     private final int[] highlightColumns;
+    private boolean selectMode;
+    private int selectIndex;
 
     public MyTableCellRender(JTextField searchField, int[] highlightColumns) {
       this.searchField = searchField;
       this.highlightColumns = highlightColumns;
     }
 
+    public MyTableCellRender(
+        JTextField searchTextField, int[] filterColumns, boolean selectMode, int selectIndex) {
+      this.searchField = searchTextField;
+      this.highlightColumns = filterColumns;
+      this.selectMode = selectMode;
+      this.selectIndex = selectIndex;
+    }
+
     @Override
     public Component getTableCellRendererComponent(
         JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      if (row % 2 == 0) setBackground(new Color(213, 213, 213));
-      else if (row % 2 == 1) setBackground(Color.white);
+      if (row % 2 == 0) this.setBackground(new Color(213, 213, 213));
+      else if (row % 2 == 1) this.setBackground(Color.white);
+
       Component c =
           super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       JLabel original = (JLabel) c;
+      if (selectMode && column == selectIndex) {
+        JCheckBox jCheckBox = new JCheckBox();
+        jCheckBox.setHorizontalAlignment(SwingConstants.CENTER);
+        jCheckBox.setSelected("true".equals(original.getText()));
+        return jCheckBox;
+      }
       original.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
       if (Arrays.stream(highlightColumns).filter(e -> e == column).findAny().isPresent()) {
         LabelHighlighted label = new LabelHighlighted();
@@ -222,6 +301,15 @@ public abstract class MyTable {
   }
 
   protected static class TableToolButton extends JButton implements MouseListener {
+    public TableToolButton(String label, Color color) {
+      super(label);
+      this.setFont(new Font(Font.DIALOG, Font.BOLD, 13));
+      this.setBorderPainted(false);
+      this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      this.addMouseListener(this);
+      this.setForeground(color);
+    }
+
     public TableToolButton(String label, ImageIcon imageIcon) {
       super(label, imageIcon);
       this.setFont(new Font(Font.DIALOG, Font.BOLD, 13));
@@ -254,21 +342,12 @@ public abstract class MyTable {
     }
   }
 
-  protected static class TablePopMenu extends JPopupMenu {
-    public TablePopMenu(Frame owner, Customer data) {
-      JMenuItem edit = new JMenuItem("Edit");
-      JMenuItem remove = new JMenuItem("Remove");
-
-      edit.addActionListener(e -> EditMemberDialogView.showDig(owner, data));
-
-      this.add(edit);
-      this.add(remove);
+  protected abstract static class TablePopMenu extends JPopupMenu {
+    public TablePopMenu() {
+      create();
     }
 
-    public TablePopMenu(Frame owner, int[] rows) {
-      JMenuItem remove = new JMenuItem("Remove");
-      this.add(remove);
-    }
+    abstract void create();
   }
 
   private static class LabelHighlighted extends JLabel {

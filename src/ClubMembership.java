@@ -3,6 +3,7 @@ import ui.ClubFrameView;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author lomofu
@@ -10,8 +11,15 @@ import java.io.IOException;
  * @create 22/Nov/2021 12:44
  */
 public class ClubMembership {
-  public static void main(String[] args) throws IOException {
-    DataSource.init();
+  public static void main(String[] args) throws InterruptedException, InvocationTargetException {
+    SwingUtilities.invokeAndWait(
+        () -> {
+          try {
+            DataSource.init();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        });
     SwingUtilities.invokeLater(
         () -> {
           try {

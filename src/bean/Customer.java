@@ -18,9 +18,11 @@ public class Customer {
   private String healthCondition = "";
   private String type = "";
   private String startDate = "";
-  private int duration = 1;
+  private String duration = "";
   private String expireTime = "";
-  private String fees = "0 GBP";
+  private String fees = "0";
+  private String parentId = "";
+  private String state = "";
 
   public Customer() {}
 
@@ -38,6 +40,7 @@ public class Customer {
     this.startDate = customer.startDate;
     this.expireTime = customer.expireTime;
     this.fees = customer.fees;
+    this.parentId = customer.parentId;
   }
 
   public String getId() {
@@ -120,11 +123,11 @@ public class Customer {
     this.type = type;
   }
 
-  public int getDuration() {
+  public String getDuration() {
     return duration;
   }
 
-  public void setDuration(int duration) {
+  public void setDuration(String duration) {
     this.duration = duration;
   }
 
@@ -142,6 +145,22 @@ public class Customer {
 
   public void setFees(String fees) {
     this.fees = fees;
+  }
+
+  public String getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(String parentId) {
+    this.parentId = parentId;
+  }
+
+  public String getState() {
+    return state;
+  }
+
+  public void setState(String state) {
+    this.state = state;
   }
 
   @Override
@@ -220,7 +239,7 @@ public class Customer {
       return this;
     }
 
-    public Builder duration(int duration) {
+    public Builder duration(String duration) {
       this.customer.duration = duration;
       return this;
     }
@@ -237,6 +256,16 @@ public class Customer {
 
     public Builder fees(String fees) {
       this.customer.fees = fees;
+      return this;
+    }
+
+    public Builder parentId(String parentId) {
+      this.customer.parentId = parentId;
+      return this;
+    }
+
+    public Builder state(String state) {
+      this.customer.state = state;
       return this;
     }
 

@@ -1,11 +1,12 @@
 package component;
 
+import utils.DateUtil;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-import static constant.UIConstant.DATE_FORMAT;
+import java.util.Date;
+import java.util.stream.IntStream;
 
 /**
  * @author lomofu
@@ -14,7 +15,6 @@ import static constant.UIConstant.DATE_FORMAT;
  */
 public class MyDatePicker extends JPanel {
   private static final String[] MONTH_LIST = new String[13];
-  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
   static {
     MONTH_LIST[0] = "";
@@ -48,9 +48,9 @@ public class MyDatePicker extends JPanel {
 
   private void initYear(int start, int end) {
     yearCombobox.addItem("");
-    for (int i = end; i > start - 1; i--) {
-      yearCombobox.addItem(String.valueOf(i));
-    }
+    IntStream.range(start - 1, end)
+        .map(i -> end - i + start - 1)
+        .forEachOrdered(i -> yearCombobox.addItem(String.valueOf(i)));
   }
 
   private void initComponents() {
@@ -75,13 +75,12 @@ public class MyDatePicker extends JPanel {
     }
     LocalDate endDate = LocalDate.parse(year + "-" + month + "-" + "01");
     dayCombobox.removeAllItems();
-    for (int i = 0; i < endDate.lengthOfMonth(); i++) {
-      dayCombobox.addItem(String.format("%02d", i + 1));
-    }
+    IntStream.range(0, endDate.lengthOfMonth())
+        .forEachOrdered(e -> dayCombobox.addItem(String.format("%02d", e + 1)));
     dayCombobox.setEnabled(true);
   }
 
-  public String getDate() {
+  public String getDateText() {
     String year = (String) yearCombobox.getSelectedItem();
     String month = (String) monthCombobox.getSelectedItem();
     String day = (String) dayCombobox.getSelectedItem();
@@ -91,8 +90,45 @@ public class MyDatePicker extends JPanel {
         || "".equals(year)
         || "".equals(month)
         || "".equals(day)) {
-      throw new RuntimeException("Date cannot be empty");
+      return "";
     }
-    return LocalDate.parse(year + "-" + month + "-" + day).format(DATE_FORMATTER);
+    return DateUtil.format(year, month, day);
+  }
+
+  public Date getDate() {
+    String year = (String) yearCombobox.getSelectedItem();
+    String month = (String) monthCombobox.getSelectedItem();
+    String day = (String) dayCombobox.getSelectedItem();
+    if (year == null
+        || month == null
+        || day == null
+        || "".equals(year)
+        || "".equals(month)
+        || "".equals(day)) {
+      return null;
+    }
+    return DateUtil.toDate(year, month, day);
+  }
+
+  public Date getDate(int offset) {
+    String year = (String) yearCombobox.getSelectedItem();
+    String month = (String) monthCombobox.getSelectedItem();
+    String day = (String) dayCombobox.getSelectedItem();
+    if (year == null
+        || month == null
+        || day == null
+        || "".equals(year)
+        || "".equals(month)
+        || "".equals(day)) {
+      return null;
+    }
+    return DateUtil.str2Date(year, month, day, offset);
+  }
+
+  public void reset() {
+    yearCombobox.setSelectedIndex(0);
+    monthCombobox.setSelectedIndex(0);
+    dayCombobox.removeAllItems();
+    dayCombobox.setEnabled(false);
   }
 }

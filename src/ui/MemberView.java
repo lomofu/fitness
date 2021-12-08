@@ -3,7 +3,7 @@ package ui;
 import component.MemberTable;
 import component.MyPanel;
 import component.MyTable;
-import data.DataSource;
+import data.DataSourceHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,27 +20,15 @@ public class MemberView extends MyPanel {
   public MemberView(ClubFrameView clubFrameView) {
     super(new BorderLayout());
 
-    String[][] data =
-        DataSource.getData().stream()
-            .map(
-                e ->
-                    new String[] {
-                      e.getId(),
-                      e.getFirstName(),
-                      e.getLastName(),
-                      e.getDateOfBirth(),
-                      e.getGender(),
-                      e.getHomeAddress(),
-                      e.getPhoneNumber(),
-                      e.getType(),
-                      e.getStartDate(),
-                      e.getExpireTime()
-                    })
-            .toArray(size -> new String[size][MEMBER_COLUMNS.length]);
-
-    MyTable memberTable = new MemberTable(clubFrameView, MEMBER_COLUMNS, data);
-
+    MyTable memberTable =
+        new MemberTable(
+            clubFrameView,
+            "Membership Table",
+            MEMBER_COLUMNS,
+            DataSourceHandler.findMembersForTableRender());
     Box verticalBox = Box.createVerticalBox();
+
+    verticalBox.add(memberTable.getTitle());
     verticalBox.add(memberTable.getjToolBar());
     verticalBox.add(Box.createVerticalStrut(10));
     verticalBox.add(memberTable.getFilterBar());

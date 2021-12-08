@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static constant.UIConstant.*;
 
@@ -18,7 +19,7 @@ import static constant.UIConstant.*;
  * @create 23/Nov/2021 10:06
  */
 public class LeftMenuView extends JPanel {
-  private final List<MyMenuButton> MY_BUTTONS = new ArrayList<>(2);
+  private final List<MyMenuButton> MY_BUTTONS = new ArrayList<>(MENU_LIST.length);
 
   private MyTabbedPanel tabbedPane;
   private int panelWidth;
@@ -48,20 +49,15 @@ public class LeftMenuView extends JPanel {
   }
 
   private void initButtons() {
-    this.MY_BUTTONS.add(
-        new MyMenuButton(
-            MENU_LIST[0][0], MyImageIcon.build(MENU_LIST[0][1], MENU_ICON_SIZE, MENU_ICON_SIZE)));
-    this.MY_BUTTONS.add(
-        new MyMenuButton(
-            MENU_LIST[1][0], MyImageIcon.build(MENU_LIST[1][1], MENU_ICON_SIZE, MENU_ICON_SIZE)));
-    this.MY_BUTTONS.add(
-        new MyMenuButton(
-            MENU_LIST[2][0], MyImageIcon.build(MENU_LIST[2][1], MENU_ICON_SIZE, MENU_ICON_SIZE)));
-
-    for (int i = 0; i < this.MY_BUTTONS.size(); i++) {
-      var finalI = i;
-      MY_BUTTONS.get(i).addActionListener(e -> this.tabbedPane.setSelectedIndex(finalI));
+    for (String[] strings : MENU_LIST) {
+      MY_BUTTONS.add(
+          new MyMenuButton(
+              strings[0], MyImageIcon.build(strings[1], MENU_ICON_SIZE, MENU_ICON_SIZE)));
     }
+
+    IntStream.range(0, this.MY_BUTTONS.size())
+        .forEachOrdered(
+            i -> MY_BUTTONS.get(i).addActionListener(e -> tabbedPane.setSelectedIndex(i)));
   }
 
   private void initTabs() {

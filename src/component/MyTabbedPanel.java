@@ -25,12 +25,14 @@ public class MyTabbedPanel extends JTabbedPane implements ChangeListener {
   }
 
   private static class MyTabbedPaneUI extends BasicTabbedPaneUI {
+
+
     @Override
     protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
       if (SHOW_TABS_HEADER) {
         return super.calculateTabAreaHeight(tabPlacement, horizRunCount, maxTabHeight);
       } else {
-        return 0;
+        return -1;
       }
     }
 

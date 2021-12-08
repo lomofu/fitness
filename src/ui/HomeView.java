@@ -1,11 +1,12 @@
 package ui;
 
-import bean.Customer;
+import bean.DataSourceChannelInfo;
 import component.MyCountCard;
 import component.MyLabel;
 import component.MyPanel;
 import data.DataSource;
 import data.DataSourceChannel;
+import dto.CustomerDto;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,14 +18,14 @@ import java.util.function.Consumer;
  * @desc
  * @create 23/Nov/2021 10:48
  */
-public class HomeView extends MyPanel implements DataSourceChannel {
-  private MyCountCard countCard;
-  private MyCountCard countCard1;
-  private JTabbedPane jTabbedPane;
+public class HomeView extends MyPanel implements DataSourceChannel<CustomerDto> {
+  private final MyCountCard countCard;
+  private final MyCountCard countCard1;
+  private final JTabbedPane jTabbedPane;
 
   public HomeView(FlowLayout flowLayout, int frameWidth, int frameHeight, JTabbedPane tabbedPane) {
     super(flowLayout);
-    this.subscribe();
+    this.subscribe(CustomerDto.class);
 
     this.jTabbedPane = tabbedPane;
     var panelWidth = (int) (frameWidth * 0.8);
@@ -38,7 +39,7 @@ public class HomeView extends MyPanel implements DataSourceChannel {
     countCard =
         initCountCard(
             "User Statistics",
-            DataSource.getData().size(),
+            DataSource.getCustomerList().size(),
             cardWidth,
             cardHeight,
             e -> this.jTabbedPane.setSelectedIndex(1));
@@ -46,7 +47,7 @@ public class HomeView extends MyPanel implements DataSourceChannel {
     countCard1 =
         initCountCard(
             "New Members Today",
-            DataSource.getData().size(),
+            DataSource.getCustomerList().size(),
             cardWidth,
             cardHeight,
             e -> this.jTabbedPane.setSelectedIndex(1));
@@ -77,13 +78,13 @@ public class HomeView extends MyPanel implements DataSourceChannel {
   }
 
   @Override
-  public void onDataChange(Customer customer) {
-    countCard.setCount(DataSource.getData().size());
-    countCard1.setCount(DataSource.getData().size());
+  public void onDataChange(CustomerDto customer) {
+    countCard.setCount(DataSource.getCustomerList().size());
+    countCard1.setCount(DataSource.getCustomerList().size());
   }
 
   @Override
-  public void subscribe() {
-    DataSource.subscribe(this);
+  public void subscribe(Class<CustomerDto> customerClass) {
+    DataSource.subscribe(new DataSourceChannelInfo<>(this, customerClass));
   }
 }

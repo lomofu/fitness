@@ -1,15 +1,22 @@
 package ui;
 
-import bean.Customer;
 import component.MyCard;
 import component.MyDatePicker;
 import data.DataSource;
-import utils.UUIDUtil;
+import data.DataSourceHandler;
+import dto.CustomerDto;
+import dto.RoleDto;
+import utils.DateUtil;
+import utils.IDUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static constant.UIConstant.*;
 
@@ -40,33 +47,39 @@ public class AddMemberDialogView extends JDialog {
   private final JTextField lastNameTextField = new JTextField(20);
   private final MyDatePicker dateOfBirthTextField =
       new MyDatePicker(1940, LocalDate.now().getYear());
-  private final JComboBox<String> genderComBox = new JComboBox<>(GENDER_LIST);
+  private final JComboBox<String> genderComBox = new JComboBox<>(MEMBER_GENDER_LIST);
   private final JTextArea homeAddressTextField = new JTextArea(4, 20);
   private final JScrollPane jScrollPaneWithHomeAddress = new JScrollPane(homeAddressTextField);
   private final JTextField phoneNumberTextField = new JTextField(20);
   private final JTextArea healthConditionTextField = new JTextArea(4, 20);
   private final JScrollPane jScrollPaneWithHealthCondition =
       new JScrollPane(healthConditionTextField);
-  private final JComboBox<String> memberComBox = new JComboBox<>(DEFAULT_MEMBERS);
-  private final JTextField startDateTextField = new JTextField(20);
-  private final JComboBox<String> durationComboBox = new JComboBox<>(DEFAULT_DURATION);
+  private final JComboBox<String> memberComBox =
+      new JComboBox<>(DataSourceHandler.findRoleDtoList());
+  private final JButton parentIdChoose = new JButton("Choose main");
+  private final Box memberBox = Box.createHorizontalBox();
+  private final MyDatePicker startDateTextField = new MyDatePicker(1940, LocalDate.now().getYear());
+  private final JComboBox<String> durationComboBox = new JComboBox<>(MEMBER_DEFAULT_DURATION);
   private final JTextField codeTextField = new JTextField(20);
 
   private final MyCard myCard = new MyCard("Member Info", true);
-  private final JLabel yourAgeLabel = new JLabel("Your Age", JLabel.LEFT);
+  private final JLabel yourAgeLabel = new JLabel("Your Age  ", JLabel.LEFT);
   private final JLabel yourAgeValue = new JLabel("0", JLabel.RIGHT);
-  private final JLabel expireTimeLabel = new JLabel("Expire Time");
-  private final JLabel expireTimeValue = new JLabel("0");
+  private final JLabel expireTimeLabel = new JLabel("Expire Time  ");
+  private final JLabel expireTimeValue = new JLabel("");
+  private final JLabel parentIdLabel = new JLabel("Main MID");
+  private final JLabel parentIdValue = new JLabel("");
   private final JLabel discountLabel = new JLabel("Discount");
   private final JLabel discountValue = new JLabel("0");
   private final JLabel membershipFeesLabel = new JLabel("Membership Fees    ");
-  private final JLabel membershipFeesValue = new JLabel("0 GBP");
+  private final JLabel membershipFeesValue = new JLabel("0");
 
   private final JButton submit = new JButton("Submit");
   private final JButton reset = new JButton("Reset");
   private final SpringLayout springLayout = new SpringLayout();
+  private Frame owner;
 
-  public AddMemberDialogView(Frame owner) {
+  private AddMemberDialogView(Frame owner) {
     initDialogSetting(owner);
     initFormElements();
     JPanel panel = initPanel();
@@ -74,10 +87,17 @@ public class AddMemberDialogView extends JDialog {
     this.add(panel);
   }
 
-  public static Customer showDig(Frame owner) {
+  public static void showDig(Frame owner) {
     AddMemberDialogView addMemberDialogView = new AddMemberDialogView(owner);
     addMemberDialogView.setVisible(true);
-    return new Customer();
+  }
+
+  public String getParentId() {
+    return parentIdValue.getText();
+  }
+
+  public void setParentId(String parentId) {
+    parentIdValue.setText(parentId);
   }
 
   private void initDialogSetting(Frame owner) {
@@ -86,6 +106,7 @@ public class AddMemberDialogView extends JDialog {
     this.setPreferredSize(new Dimension(600, 800));
     this.setResizable(true);
     this.setLocationRelativeTo(owner);
+    this.owner = owner;
   }
 
   private void initFormElements() {
@@ -93,38 +114,17 @@ public class AddMemberDialogView extends JDialog {
     memberIDTextField.setFocusable(false);
     memberIDTextField.setBackground(new Color(0, 0, 0, 0));
     memberIDTextField.setBorder(null);
-    memberIDTextField.setText(UUIDUtil.generate());
+    memberIDTextField.setText(IDUtil.generateUUID());
+
+    parentIdChoose.setVisible(false);
+    parentIdChoose.setEnabled(false);
+    memberBox.add(memberComBox);
+    memberBox.add(Box.createHorizontalStrut(5));
+    memberBox.add(parentIdChoose);
 
     submit.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
     reset.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
     reset.setForeground(Color.RED);
-  }
-
-  private void initListener() {
-    submit.addActionListener(
-        e -> {
-          Customer customer =
-              new Customer.Builder()
-                  .id(memberIDTextField.getText())
-                  .firstName(firstNameTextField.getText())
-                  .lastName(lastNameTextField.getText())
-                  .dateOfBirth("")
-                  .gender(GENDER_LIST[genderComBox.getSelectedIndex()])
-                  .homeAddress(homeAddressTextField.getText())
-                  .phoneNumber(phoneNumberTextField.getText())
-                  .healthCondition(healthConditionTextField.getText())
-                  .type((String) memberComBox.getSelectedItem())
-                  .startDate(startDateTextField.getText())
-                  .expireTime(expireTimeValue.getText())
-                  .duration(
-                      Integer.parseInt(
-                          (String) Objects.requireNonNull(durationComboBox.getSelectedItem())))
-                  .fees(membershipFeesValue.getText())
-                  .build();
-
-          DataSource.add(customer);
-          this.dispose();
-        });
   }
 
   private JPanel initPanel() {
@@ -152,7 +152,7 @@ public class AddMemberDialogView extends JDialog {
     panel.add(jScrollPaneWithHomeAddress);
     panel.add(phoneNumberTextField);
     panel.add(jScrollPaneWithHealthCondition);
-    panel.add(memberComBox);
+    panel.add(memberBox);
     panel.add(startDateTextField);
     panel.add(durationComboBox);
     panel.add(myCard);
@@ -169,6 +169,9 @@ public class AddMemberDialogView extends JDialog {
 
     homeAddressTextField.setLineWrap(true);
     homeAddressTextField.setWrapStyleWord(true);
+
+    parentIdLabel.setVisible(false);
+    parentIdValue.setVisible(false);
 
     discountLabel.setForeground(Color.RED);
     discountLabel.setVisible(false);
@@ -215,7 +218,7 @@ public class AddMemberDialogView extends JDialog {
         healthConditionLabel,
         jScrollPaneWithHealthCondition);
     initChildMultiRow(
-        healthConditionLabel, jScrollPaneWithHealthCondition, membershipLabel, memberComBox);
+        healthConditionLabel, jScrollPaneWithHealthCondition, membershipLabel, memberBox);
 
     initChildRow(membershipLabel, startDateLabel, startDateTextField);
     initChildRow(startDateLabel, durationDateLabel, durationComboBox);
@@ -238,12 +241,12 @@ public class AddMemberDialogView extends JDialog {
         -childWidth.getValue() / 2,
         SpringLayout.HORIZONTAL_CENTER,
         panel);
-    springLayout.putConstraint(SpringLayout.NORTH, memberIdLabel, 20, SpringLayout.NORTH, panel);
+    springLayout.putConstraint(SpringLayout.NORTH, memberIdLabel, Y_GAP, SpringLayout.NORTH, panel);
 
     springLayout.putConstraint(
         SpringLayout.NORTH, memberIDTextField, 0, SpringLayout.NORTH, memberIdLabel);
     springLayout.putConstraint(
-        SpringLayout.WEST, memberIDTextField, 20, SpringLayout.EAST, memberIdLabel);
+        SpringLayout.WEST, memberIDTextField, X_GAP, SpringLayout.EAST, memberIdLabel);
   }
 
   private void initChildRow(JLabel refer, JLabel label, Component component) {
@@ -267,8 +270,9 @@ public class AddMemberDialogView extends JDialog {
   private void initMemberInfoCard() {
     Box box = getHBox(yourAgeLabel, yourAgeValue);
     Box box1 = getHBox(expireTimeLabel, expireTimeValue);
-    Box box2 = getHBox(discountLabel, discountValue);
-    Box box3 = getHBox(membershipFeesLabel, membershipFeesValue);
+    Box box2 = getHBox(parentIdLabel, parentIdValue);
+    Box box3 = getHBox(discountLabel, discountValue);
+    Box box4 = getHBox(membershipFeesLabel, membershipFeesValue);
 
     Box verticalBox = Box.createVerticalBox();
     verticalBox.add(box);
@@ -278,6 +282,8 @@ public class AddMemberDialogView extends JDialog {
     verticalBox.add(box2);
     verticalBox.add(Box.createVerticalStrut(10));
     verticalBox.add(box3);
+    verticalBox.add(Box.createVerticalStrut(10));
+    verticalBox.add(box4);
 
     int myCardWidth =
         Spring.sum(
@@ -285,7 +291,7 @@ public class AddMemberDialogView extends JDialog {
                 Spring.constant(X_GAP))
             .getValue();
     int myCardHeight =
-        Spring.sum(Spring.height(verticalBox), Spring.constant(Y_GAP * 2)).getValue();
+        Spring.sum(Spring.height(verticalBox), Spring.constant(Y_GAP * 3)).getValue();
 
     myCard.setCSize(myCardWidth, myCardHeight);
     myCard.addC(verticalBox);
@@ -297,5 +303,77 @@ public class AddMemberDialogView extends JDialog {
     box.add(Box.createHorizontalGlue());
     box.add(value);
     return box;
+  }
+
+  private void initListener() {
+    memberComBox.addActionListener(
+        __ -> {
+          String memberType = (String) memberComBox.getSelectedItem();
+          if (DEFAULT_MEMBERS[1].getRoleName().equals(memberType)) {
+            parentIdChoose.setVisible(true);
+            parentIdChoose.setEnabled(true);
+            parentIdLabel.setVisible(true);
+            parentIdValue.setVisible(true);
+            return;
+          }
+          parentIdChoose.setVisible(false);
+          parentIdChoose.setEnabled(false);
+          parentIdLabel.setVisible(false);
+          parentIdValue.setVisible(false);
+        });
+
+    parentIdChoose.addActionListener(__ -> AddMainMemberDialogView.showDig(this.owner, this));
+
+    durationComboBox.addActionListener(
+        __ -> {
+          Date date = startDateTextField.getDate();
+          if (Objects.isNull(date)) {
+            return;
+          }
+
+          String expireTime =
+              DateUtil.plusMonths(
+                  date,
+                  Optional.ofNullable(durationComboBox.getSelectedItem())
+                      .map(String.class::cast)
+                      .map(Integer::parseInt)
+                      .orElse(-1));
+
+          expireTimeValue.setText(expireTime);
+        });
+
+    submit.addActionListener(
+        e -> {
+          CompletableFuture<RoleDto> roleDtoCompletableFuture =
+              CompletableFuture.supplyAsync(
+                  () -> {
+                    String roleName = (String) memberComBox.getSelectedItem();
+                    return DataSourceHandler.findRoleDtoByName(roleName);
+                  });
+
+          CustomerDto customerDto =
+              new CustomerDto.Builder()
+                  .id(memberIDTextField.getText())
+                  .firstName(firstNameTextField.getText())
+                  .lastName(lastNameTextField.getText())
+                  .dateOfBirth(dateOfBirthTextField.getDate())
+                  .gender(MEMBER_GENDER_LIST[genderComBox.getSelectedIndex()])
+                  .homeAddress(homeAddressTextField.getText())
+                  .phoneNumber(phoneNumberTextField.getText())
+                  .healthCondition(healthConditionTextField.getText())
+                  .type(roleDtoCompletableFuture.join())
+                  .startDate(startDateTextField.getDate())
+                  .expireTime(DateUtil.str2Date(expireTimeValue.getText()))
+                  .duration(
+                      Optional.ofNullable(durationComboBox.getSelectedItem())
+                          .map(String.class::cast)
+                          .map(Integer::parseInt)
+                          .orElse(-1))
+                  .fees(new BigDecimal(membershipFeesValue.getText()))
+                  .build();
+
+          DataSource.add(customerDto);
+          this.dispose();
+        });
   }
 }

@@ -1,10 +1,13 @@
 package ui;
 
-import bean.Customer;
+import bean.Role;
 import component.MyCard;
+import dto.CustomerDto;
+import utils.DateUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static constant.UIConstant.*;
@@ -35,16 +38,17 @@ public class EditMemberDialogView extends JDialog {
   private final JTextField firstNameTextField = new JTextField(20);
   private final JTextField lastNameTextField = new JTextField(20);
   private final JTextField dateOfBirthTextField = new JTextField(20);
-  private final JComboBox<String> genderComBox = new JComboBox<>(GENDER_LIST);
+  private final JComboBox<String> genderComBox = new JComboBox<>(MEMBER_GENDER_LIST);
   private final JTextArea homeAddressTextField = new JTextArea(4, 20);
   private final JScrollPane jScrollPaneWithHomeAddress = new JScrollPane(homeAddressTextField);
   private final JTextField phoneNumberTextField = new JTextField(20);
   private final JTextArea healthConditionTextField = new JTextArea(4, 20);
   private final JScrollPane jScrollPaneWithHealthCondition =
       new JScrollPane(healthConditionTextField);
-  private final JComboBox<String> memberComBox = new JComboBox<>(DEFAULT_MEMBERS);
+  private final JComboBox<String> memberComBox =
+      new JComboBox<>(Arrays.stream(DEFAULT_MEMBERS).map(Role::getRoleName).toArray(String[]::new));
   private final JTextField startDateTextField = new JTextField(20);
-  private final JComboBox<String> durationComboBox = new JComboBox<>(DEFAULT_DURATION);
+  private final JComboBox<String> durationComboBox = new JComboBox<>(MEMBER_DEFAULT_DURATION);
   private final JTextField codeTextField = new JTextField(20);
 
   private final MyCard myCard = new MyCard("Member Info", true);
@@ -61,7 +65,7 @@ public class EditMemberDialogView extends JDialog {
   private final JButton reset = new JButton("Reset");
 
   private final SpringLayout springLayout = new SpringLayout();
-  private Customer origin;
+  private CustomerDto origin;
 
   public EditMemberDialogView(Frame owner) {
     initDialogSetting(owner);
@@ -70,14 +74,13 @@ public class EditMemberDialogView extends JDialog {
     this.add(myPanel);
   }
 
-  public static Customer showDig(Frame owner, Customer data) {
+  public static void showDig(Frame owner, CustomerDto data) {
     EditMemberDialogView editMemberDialogView = new EditMemberDialogView(owner);
     bindData(editMemberDialogView, data);
     editMemberDialogView.setVisible(true);
-    return new Customer();
   }
 
-  private static void bindData(EditMemberDialogView editMemberDialogView, Customer data) {
+  private static void bindData(EditMemberDialogView editMemberDialogView, CustomerDto data) {
     Optional.ofNullable(data)
         .orElseThrow(() -> new RuntimeException("Selected Item cannot be null"));
 
@@ -85,14 +88,14 @@ public class EditMemberDialogView extends JDialog {
     editMemberDialogView.memberIDTextField.setText(data.getId());
     editMemberDialogView.firstNameTextField.setText(data.getFirstName());
     editMemberDialogView.lastNameTextField.setText(data.getLastName());
-    editMemberDialogView.dateOfBirthTextField.setText(data.getDateOfBirth());
+    editMemberDialogView.dateOfBirthTextField.setText(DateUtil.format(data.getDateOfBirth()));
     editMemberDialogView.genderComBox.setSelectedItem(data.getGender());
     editMemberDialogView.homeAddressTextField.setText(data.getHomeAddress());
     editMemberDialogView.healthConditionTextField.setText(data.getHealthCondition());
-    editMemberDialogView.memberComBox.setSelectedItem(data.getType());
-    editMemberDialogView.startDateTextField.setText(data.getStartDate());
-    editMemberDialogView.expireTimeValue.setText(data.getExpireTime());
-    editMemberDialogView.membershipFeesValue.setText(data.getFees());
+    editMemberDialogView.memberComBox.setSelectedItem(data.getRole().getRoleName());
+    editMemberDialogView.startDateTextField.setText(DateUtil.format(data.getStartDate()));
+    editMemberDialogView.expireTimeValue.setText(DateUtil.format(data.getExpireTime()));
+    editMemberDialogView.membershipFeesValue.setText(data.getFees().toString());
 
     //  todo
   }
