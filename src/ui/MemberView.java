@@ -3,7 +3,7 @@ package ui;
 import component.MemberTable;
 import component.MyPanel;
 import component.MyTable;
-import data.DataSourceHandler;
+import core.MembershipService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,23 +17,23 @@ import static constant.UIConstant.MEMBER_COLUMNS;
  */
 public class MemberView extends MyPanel {
 
-  public MemberView(ClubFrameView clubFrameView) {
-    super(new BorderLayout());
+    public MemberView(ClubFrameView clubFrameView) {
+        super(new BorderLayout());
 
-    MyTable memberTable =
-        new MemberTable(
-            clubFrameView,
-            "Membership Table",
-            MEMBER_COLUMNS,
-            DataSourceHandler.findMembersForTableRender());
-    Box verticalBox = Box.createVerticalBox();
+        MyTable memberTable =
+                new MemberTable(
+                        clubFrameView,
+                        "Membership Table",
+                        MEMBER_COLUMNS,
+                        MembershipService.findMembersForTableRender());
+        Box verticalBox = Box.createVerticalBox();
 
-    verticalBox.add(memberTable.getTitle());
-    verticalBox.add(memberTable.getjToolBar());
-    verticalBox.add(Box.createVerticalStrut(10));
-    verticalBox.add(memberTable.getFilterBar());
+        verticalBox.add(memberTable.getTitle());
+        verticalBox.add(memberTable.getjToolBar());
+        verticalBox.add(Box.createVerticalStrut(10));
+        verticalBox.add(memberTable.getFilterBar());
 
-    this.add(verticalBox, BorderLayout.NORTH);
-    this.add(memberTable.getjScrollPane(), BorderLayout.CENTER);
-  }
+        this.add(verticalBox, BorderLayout.NORTH);
+        this.add(memberTable.getjScrollPane(), BorderLayout.CENTER);
+    }
 }

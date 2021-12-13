@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * @author lomofu
- * @desc
+ * @desc 
  * @create 22/Nov/2021 18:28
  */
 public class Customer {

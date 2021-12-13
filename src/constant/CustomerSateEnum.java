@@ -1,16 +1,16 @@
-package bean;
+package constant;
 
 /**
  * @author lomofu
  * @desc
  * @create 08/Dec/2021 00:51
  */
-public enum CustomerSate {
+public enum CustomerSateEnum {
     ACTIVE("active"),
     EXPIRED("expired");
     final String name;
 
-    CustomerSate(String name) {
+    CustomerSateEnum(String name) {
         this.name = name;
     }
 

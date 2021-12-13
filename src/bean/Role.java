@@ -1,6 +1,7 @@
 package bean;
 
 import utils.IDUtil;
+import utils.StringUtil;
 
 import java.text.MessageFormat;
 
@@ -22,15 +23,8 @@ public class Role {
 
     public Role() {}
 
-    public Role(
-            String roleName,
-            String oneMonth,
-            String threeMonth,
-            String halfYear,
-            String fullYear,
-            String gym,
-            String swimmingPool,
-            String courseList) {
+    public Role(String roleName, String oneMonth, String threeMonth, String halfYear,
+                String fullYear, String gym, String swimmingPool, String courseList) {
         this.roleId = IDUtil.generateId("R");
         this.roleName = roleName;
         this.oneMonth = oneMonth;
@@ -116,8 +110,7 @@ public class Role {
 
     @Override
     public String toString() {
-        return MessageFormat.format(
-                "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
-                roleId, roleName, oneMonth, threeMonth, halfYear, fullYear, gym, swimmingPool, courseList);
+        return MessageFormat.format("{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+                roleId, StringUtil.escapeSpecialCharacters(roleName), oneMonth, threeMonth, halfYear, fullYear, gym, swimmingPool, courseList);
     }
 }

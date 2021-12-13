@@ -2,6 +2,8 @@ package bean;
 
 import utils.IDUtil;
 
+import static utils.StringUtil.escapeSpecialCharacters;
+
 /**
  * @author lomofu
  * @desc
@@ -36,6 +38,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return courseId + "," + courseName;
+        return courseId + "," + escapeSpecialCharacters(courseName);
     }
+
 }

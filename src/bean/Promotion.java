@@ -1,5 +1,9 @@
 package bean;
 
+import java.text.MessageFormat;
+
+import static utils.StringUtil.escapeSpecialCharacters;
+
 /**
  * @author lomofu
  * @desc
@@ -41,5 +45,10 @@ public class Promotion {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format("{0},{1},{2},{3}", promotionId, escapeSpecialCharacters(promotionCode), promotionType, value);
     }
 }

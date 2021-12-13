@@ -2,16 +2,15 @@ package component;
 
 import bean.Consumption;
 import bean.DataSourceChannelInfo;
+import constant.DataManipulateEnum;
+import core.ConsumptionService;
 import data.DataSource;
 import data.DataSourceChannel;
 import ui.ClubFrameView;
 import utils.DateUtil;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -23,8 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static constant.UIConstant.CONSUMPTION_SEARCH_FILTER_COLUMNS;
-import static constant.UIConstant.TABLE_TOOL_LIST;
+import static constant.UIConstant.*;
 
 /**
  * @author lomofu
@@ -32,9 +30,19 @@ import static constant.UIConstant.TABLE_TOOL_LIST;
  * @create 26/Nov/2021 02:11
  */
 public class ConsumptionTable extends MyTable implements DataSourceChannel<Consumption> {
+    private boolean flag = true;
+
     public ConsumptionTable(
             ClubFrameView clubFrameView, String title, String[] columns, Object[][] data) {
         super(clubFrameView, title, columns, data, CONSUMPTION_SEARCH_FILTER_COLUMNS);
+        this.subscribe(Consumption.class);
+        initTable();
+    }
+
+    public ConsumptionTable(
+            ClubFrameView clubFrameView, String title, String[] columns, Object[][] data, boolean flag) {
+        super(clubFrameView, title, columns, data, CONSUMPTION_SEARCH_FILTER_COLUMNS);
+        this.flag = flag;
         this.subscribe(Consumption.class);
         initTable();
     }
@@ -49,6 +57,17 @@ public class ConsumptionTable extends MyTable implements DataSourceChannel<Consu
 
     @Override
     protected void addComponentsToToolBar() {
+        this.helpBtn.addActionListener(e ->
+                JOptionPane.showMessageDialog(this.jScrollPane, HELP_INFO[1], "Help", JOptionPane.QUESTION_MESSAGE, MyImageIcon.build(TABLE_TOOL_LIST[9][1])));
+
+        JButton refreshBtn =
+                new TableToolButton(TABLE_TOOL_LIST[6][0], MyImageIcon.build(TABLE_TOOL_LIST[6][1]));
+        refreshBtn.addActionListener(__ -> {
+            Rectangle rect = jTable.getCellRect(0, 0, true);
+            jTable.scrollRectToVisible(rect);
+            fetchData();
+        });
+
         JButton filterBtn = new TableToolButton("", MyImageIcon.build(TABLE_TOOL_LIST[3][1]));
         filterBtn.setToolTipText(TABLE_TOOL_LIST[3][0]);
 
@@ -66,9 +85,14 @@ public class ConsumptionTable extends MyTable implements DataSourceChannel<Consu
                     this.filterBar.setVisible(true);
                 });
 
-        this.jToolBar.add(Box.createHorizontalGlue());
-        this.jToolBar.add(filterBtn);
-        this.jToolBar.addSeparator(new Dimension(10, 0));
+        if(flag) {
+            this.jToolBar.add(refreshBtn);
+            this.jToolBar.add(Box.createHorizontalGlue());
+            this.jToolBar.add(filterBtn);
+            this.jToolBar.addSeparator(new Dimension(10, 0));
+        } else {
+            this.jToolBar.add(Box.createHorizontalGlue());
+        }
         this.jToolBar.add(this.searchBox);
     }
 
@@ -189,7 +213,29 @@ public class ConsumptionTable extends MyTable implements DataSourceChannel<Consu
     protected void onDoubleClick(MouseEvent e) {}
 
     @Override
-    public void onDataChange(Consumption consumption) {}
+    public void onDataChange(Consumption consumption, DataManipulateEnum flag) {
+        switch(flag) {
+            case INSERT -> insert();
+            case UPDATE, DELETE -> SwingUtilities.invokeLater(this::fetchData);
+        }
+    }
+
+    private void insert() {
+        SwingUtilities.invokeLater(() -> {
+            fetchData();
+            Rectangle rect = jTable.getCellRect(0, 0, true);
+            jTable.scrollRectToVisible(rect);
+        });
+    }
+
+    private void fetchData() {
+        DefaultTableModel model = (DefaultTableModel) this.jTable.getModel();
+        model.setDataVector(ConsumptionService.findConsumptionsForTableRender(), CONSUMPTION_COLUMNS);
+        model.fireTableDataChanged();
+        this.jTable.setModel(model);
+        super.setTableStyle();
+        initTable();
+    }
 
     @Override
     public void subscribe(Class<Consumption> consumptionClass) {
