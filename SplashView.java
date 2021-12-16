@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -12,7 +13,10 @@ public class SplashView {
 
     public static void run() {
         Dimension screen = window.getToolkit().getScreenSize();
-        ImageIcon imageIcon = new ImageIcon("assets/splash.jpg");
+        StringBuffer buffer = new StringBuffer();
+        String s = buffer.append(ImageConstant.SPLASH).append(ImageConstant.SPLASH1).toString();
+        byte[] image = Base64.getDecoder().decode(s);
+        ImageIcon imageIcon = new ImageIcon(image);
         window.getContentPane().add(
                 new JLabel("", imageIcon, SwingConstants.CENTER));
         window.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());

@@ -10,26 +10,26 @@ public final class UIConstant {
     public static final int MENU_ICON_SIZE = 24;
 
     public static final String[][] MENU_LIST = {
-            {"Home", "assets/leftmenu/home.png"},
-            {"Membership", "assets/leftmenu/membership.png"},
-            {"Consumption", "assets/leftmenu/money.png"},
-            {"Role", "assets/leftmenu/user.png"},
-            {"Course", "assets/leftmenu/bicep.png"},
-            {"Promotion", "assets/leftmenu/promotion.png"},
-            {"Visitor", "assets/leftmenu/visitor.png"}
+            {"Home", ImageConstant.HOME},
+            {"Membership", ImageConstant.MEMBERSHIP},
+            {"Consumption", ImageConstant.MONEY},
+            {"Role", ImageConstant.USER},
+            {"Course", ImageConstant.BICEP},
+            {"Promotion", ImageConstant.PROMOTION},
+            {"Visitor", ImageConstant.VISITOR}
     };
 
     public static final String[][] TABLE_TOOL_LIST = {
-            {"Add", "assets/table/plus.png"},
-            {"Edit", "assets/table/edit.png"},
-            {"Remove", "assets/table/remove.png"},
-            {"Filter", "assets/table/filter.png"},
-            {"Close", "assets/table/cancel.png"},
-            {"Search", "assets/table/search.png"},
-            {"Refresh", "assets/table/refresh.png"},
-            {"Consumption", "assets/table/dollar.png"},
-            {"Renew", "assets/table/renewable-energy.png"},
-            {"Help", "assets/table/question.png"},
+            {"Add", ImageConstant.PLUS},
+            {"Edit", ImageConstant.EDIT},
+            {"Remove", ImageConstant.REMOVE},
+            {"Filter", ImageConstant.FILTER},
+            {"Close", ImageConstant.CANCEL},
+            {"Search", ImageConstant.SEARCH},
+            {"Refresh", ImageConstant.REFRESH},
+            {"Consumption", ImageConstant.DOLLAR},
+            {"Renew", ImageConstant.RENEWABLE_ENERGY},
+            {"Help", ImageConstant.QUESTION},
     };
 
     public static final String[] MEMBER_COLUMNS = {
