@@ -1,4 +1,10 @@
 out/
-.class
-.idea
-.iml
+*.class
+*.idea
+*.iml
+customerlist.csv
+consumptionlist.csv
+courselist.csv
+promotionlist.csv
+rolelist.csv
+visitorlist.csv
