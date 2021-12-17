@@ -5,8 +5,8 @@ import java.awt.event.MouseEvent;
 
 /**
  * @author lomofu
- * @desc
- * @create 12/Dec/2021 19:01
+ *
+ *
  */
 public class VisitorTable extends MyTable implements DataSourceChannel<VisitorDto> {
     public VisitorTable(ClubFrameView clubFrameView, String title, String[] columns, Object[][] data, int[] filterColumns) {

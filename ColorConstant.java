@@ -2,8 +2,8 @@ import java.awt.*;
 
 /**
  * @author lomofu
- * @desc
- * @create 13/Dec/2021 04:49
+ *
+ * This method defines some colour constants used in the system
  */
 public final class ColorConstant {
     public static final Color PANTONE433C = new Color(34, 47, 61);

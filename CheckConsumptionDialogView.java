@@ -3,8 +3,8 @@ import java.awt.*;
 
 /**
  * @author lomofu
- * @desc
- * @create 11/Dec/2021 06:15
+ * <p>
+ * This class is used to display a particular membership consumption record
  */
 public class CheckConsumptionDialogView extends JDialog {
     private CheckConsumptionDialogView(Frame owner, String memberId) {
@@ -12,8 +12,9 @@ public class CheckConsumptionDialogView extends JDialog {
 
         MyTable consumptionTable =
                 new ConsumptionTable((ClubFrameView) owner, "Personal Consumption Table", UIConstant.CONSUMPTION_COLUMNS, ConsumptionService.findConsumptionsByMemberIdForRender(memberId), false);
-        Box verticalBox = Box.createVerticalBox();
 
+        // Initialize the layout of the table
+        Box verticalBox = Box.createVerticalBox();
         verticalBox.add(consumptionTable.getTitle());
         verticalBox.add(consumptionTable.getjToolBar());
         verticalBox.add(Box.createVerticalStrut(10));
@@ -24,6 +25,14 @@ public class CheckConsumptionDialogView extends JDialog {
 
     }
 
+    /**
+     * This factory method will create a new dialog when select one membership row and click the consumption button on the
+     * see@MemberTable
+     * The same option is also support the right click of one membership row
+     *
+     * @param owner          the parent component
+     * @param memberId
+     */
     public static void showDig(Frame owner, String memberId) {
         CheckConsumptionDialogView dialog = new CheckConsumptionDialogView(owner, memberId);
         dialog.setVisible(true);

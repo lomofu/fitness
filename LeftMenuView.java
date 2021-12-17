@@ -8,8 +8,8 @@ import java.util.stream.IntStream;
 
 /**
  * @author lomofu
- * @desc
- * @create 23/Nov/2021 10:06
+ *
+ * This class
  */
 public class LeftMenuView extends JPanel {
     private final List<MyMenuButton> MY_BUTTONS = new ArrayList<>(UIConstant.MENU_LIST.length);

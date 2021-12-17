@@ -4,10 +4,11 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author lomofu
- * @desc
- * @create 22/Nov/2021 12:49
+ * <p>
+ * This class is a main frame of the whole application
  */
 public class ClubFrameView extends JFrame {
+    // set the bottom tool if there is an IO operation you can see the sync progress bar
     private static Box statePanel = Box.createHorizontalBox();
     private static JProgressBar progressBar = new JProgressBar();
 
@@ -32,19 +33,38 @@ public class ClubFrameView extends JFrame {
         SplashView.dispose();
     }
 
+    /**
+     * This method set the length of progress bar
+     *
+     * @param count
+     */
     public static void syncState(int count) {
         statePanel.setVisible(true);
         progressBar.setMaximum(count);
-        progressBar.setMinimum(0);
         progressBar.setValue(0);
     }
 
+    /**
+     * This method exposure the progress bar
+     */
     public static void updateProgressBar() {
-        var i = progressBar.getValue();
-        i += i;
-        progressBar.setValue(i);
+        try {
+            var i = progressBar.getValue();
+            i++;
+            if(i>progressBar.getMaximum()){
+                progressBar.setValue(0);
+            }
+            Thread.sleep(500);
+            progressBar.setValue(i);
+        } catch (InterruptedException e) {
+            removeSyncState();
+            Logger.error(e.getMessage());
+        }
     }
 
+    /**
+     * This method finish the progress bar
+     */
     public static void removeSyncState() {
         try {
             TimeUnit.SECONDS.sleep(1);
@@ -60,6 +80,7 @@ public class ClubFrameView extends JFrame {
         progressBar.setIndeterminate(false);
         progressBar.setString("Sync");
         progressBar.setValue(0);
+        progressBar.setMinimum(0);
         progressBar.setMaximumSize(new Dimension(150, 30));
         statePanel.setFocusable(false);
         statePanel.add(Box.createHorizontalGlue());
@@ -72,6 +93,9 @@ public class ClubFrameView extends JFrame {
         this.leftMenuView = new LeftMenuView(this.frameWidth, this.frameHeight);
     }
 
+    /**
+     * This method initialize the tab of different data statistics view
+     */
     private void initTabs() {
         this.leftMenuView.addTab(
                 UIConstant.MENU_LIST[0][0],

@@ -1,7 +1,8 @@
+
 /**
  * @author lomofu
- * @desc
- * @create 08/Dec/2021 00:51
+ *
+ * This enum list two state of a membership
  */
 public enum CustomerSateEnum {
     ACTIVE("active"),

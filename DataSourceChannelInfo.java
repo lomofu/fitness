@@ -1,7 +1,8 @@
 /**
  * @author lomofu
- * @desc
- * @create 05/Dec/2021 23:07
+ * <p>
+ * This class wraps the parameters required for a subscription
+ * The most important things to know is T.class
  */
 public class DataSourceChannelInfo<T> {
     private DataSourceChannel<?> dataSourceChannel;
@@ -12,6 +13,7 @@ public class DataSourceChannelInfo<T> {
         this.tClass = tClass;
     }
 
+    //getter
     public DataSourceChannel<?> getDataSourceChannel() {
         return dataSourceChannel;
     }

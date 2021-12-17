@@ -2,8 +2,8 @@ import java.util.Objects;
 
 /**
  * @author lomofu
- * @desc 
- * @create 22/Nov/2021 18:28
+ *
+ * This class stores each customer details
  */
 public class Customer {
   private String id = "";
@@ -22,9 +22,12 @@ public class Customer {
   private String parentId = "";
   private String state = "";
 
-  public Customer() {}
+  public Customer() {
+    // do nothing
+  }
 
   public Customer(Customer customer) {
+    // set the details
     this.id = customer.id;
     this.firstName = customer.firstName;
     this.lastName = customer.lastName;
@@ -161,17 +164,25 @@ public class Customer {
     this.state = state;
   }
 
+  /**
+   * This method overrides the equals' method to distinct the repeat records
+   *
+   * @param o customer object
+   * @return compare result: true or false
+   */
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Customer customer = (Customer) o;
 
+    // firstly, compare full names for equality
     if ("".equals(id) || "".equals(customer.id)) {
       boolean condition =
           Objects.equals(firstName, customer.firstName)
               && Objects.equals(lastName, customer.lastName);
 
+      // secondly, compare whether the dates of birth are the same
       if (!"".equals(dateOfBirth) || !"".equals(customer.dateOfBirth)) {
         condition = condition && Objects.equals(dateOfBirth, customer.dateOfBirth);
       }
@@ -180,11 +191,20 @@ public class Customer {
     return Objects.equals(id, customer.id);
   }
 
+  /**
+   * The hashCode will be used on distinct repeat object in collection
+   * especially in set and hash map
+   *
+   * @return
+   */
   @Override
   public int hashCode() {
     return Objects.hash(firstName, lastName);
   }
 
+  /**
+   * The builder design pattern help to build an object in an elegant way
+   */
   public static class Builder {
     private Customer customer;
 

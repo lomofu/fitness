@@ -1,7 +1,7 @@
 /**
  * @author lomofu
- * @desc
- * @create 10/Dec/2021 01:43
+ * <p>
+ * This enum list the data source actions which will be used for the obsever in onchange callback functions
  */
 public enum DataManipulateEnum {
     INSERT,

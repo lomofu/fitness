@@ -2,8 +2,8 @@ import java.math.BigDecimal;
 
 /**
  * @author lomofu
- * @desc
- * @create 10/Dec/2021 01:41
+ *
+ * This class define two default membership type with fees, courses and path
  */
 public final class DefaultDataConstant {
     public static final Role[] DEFAULT_MEMBERS = {

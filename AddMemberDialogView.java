@@ -17,7 +17,8 @@ import java.util.concurrent.CompletableFuture;
  * 2. For the old member records who lose the membership type, it can be transferred to active members.
  */
 public class AddMemberDialogView extends JDialog implements Validator {
-    private static final int X_GAP = 20; // define the default gap for each component in the layout
+    // define the default gap for each component in the layout
+    private static final int X_GAP = 20;
     private static final int Y_GAP = 20;
 
     private final JLabel memberIdLabel = new JLabel("* Member ID");
@@ -162,7 +163,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
 
     private void initDialogSetting(Frame owner) {
         this.setModal(true); // make this dialog on the top and interrupt to operate the parent component
-        if(transfer) {
+        if (transfer) {
             this.setTitle("Transfer to a new Member");
         } else {
             this.setTitle("New Member");
@@ -207,6 +208,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
         JPanel panel = new JPanel(springLayout);
         initSpringLayout(panel);
 
+        // add the components to the panel
         panel.add(memberIdLabel);
         panel.add(firstNameLabel);
         panel.add(lastNameLabel);
@@ -302,7 +304,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
         initChildRow(startDateLabel, durationDateLabel, durationComboBox);
         initChildRow(durationDateLabel, codeLabel, codeBox);
 
-        // use the springlayout to put constraint
+        // use the spring layout to put constraint
         springLayout.putConstraint(SpringLayout.WEST, myCard, 0, SpringLayout.WEST, codeLabel);
         springLayout.putConstraint(SpringLayout.NORTH, myCard, Y_GAP, SpringLayout.SOUTH, codeBox);
 
@@ -319,7 +321,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
         springLayout.putConstraint(
                 SpringLayout.WEST,
                 memberIdLabel,
-                - childWidth.getValue() / 2,
+                -childWidth.getValue() / 2,
                 SpringLayout.HORIZONTAL_CENTER,
                 panel);
         springLayout.putConstraint(SpringLayout.NORTH, memberIdLabel, Y_GAP, SpringLayout.NORTH, panel);
@@ -331,7 +333,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
     }
 
     /**
-     * The function abstract a row with a JLabel and a component (most is the JTextField)
+     * The function abstract a row with a JLabel and a component (most are the JTextFields)
      *
      * @param refer     the reference label
      * @param label     the label need to put constraint
@@ -400,7 +402,9 @@ public class AddMemberDialogView extends JDialog implements Validator {
         myCard.addC(verticalBox);
     }
 
-    /* this function will create a HorizontalBox filled with two labels */
+    /**
+     * this function will create a HorizontalBox filled with two labels
+     */
     private Box getHBox(JLabel label, JLabel value) {
         Box box = Box.createHorizontalBox();
         box.add(label);
@@ -416,77 +420,97 @@ public class AddMemberDialogView extends JDialog implements Validator {
     }
 
     /**
-     * This function manger the
+     * This function manger all the callback events of the components
      */
     private void initListener() {
+        // callback when the date of birth (see@MyDatePicker) is selected
         dateOfBirthTextField.onSelect(e -> updateAge());
 
         memberComBox.addActionListener(__ -> {
-            String memberType = (String) memberComBox.getSelectedItem();
-            if(DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(memberType)) {
+            String memberType = (String) memberComBox.getSelectedItem(); // get the member type chosen in the member type box
+
+            // if the membership type is the family membership, the MID will show in the membership info card, cuz it could be a sub-account creation
+            if (DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(memberType)) {
                 parentIdChoose.setVisible(true);
                 parentIdChoose.setEnabled(true);
                 parentIdLabel.setVisible(true);
                 parentIdValue.setVisible(true);
             } else {
+                // cover the situation that choose the family member before also sync the parent info that make the picker locked, but should unlock when switch to other type
                 startDateTextField.setUnLock();
                 parentIdChoose.setVisible(false);
                 parentIdChoose.setEnabled(false);
                 parentIdLabel.setVisible(false);
                 parentIdValue.setVisible(false);
             }
-            if(startDateTextField.getDate() != null) {
+
+            // also, if the start date is chosen, the fees need to be updated
+            if (startDateTextField.getDate() != null) {
                 updateFees();
             }
+
+            // update the fees with discount, if the promotion code is applied before
             String code = codeTextField.getText();
             Optional<Promotion> promotion = PromotionCodeService.findPromotionCodeOp(code);
-            if(startDateTextField.getDate() != null && promotion.isPresent()) {
+            if (startDateTextField.getDate() != null && promotion.isPresent()) {
                 updateFeesWithDiscount();
             }
         });
 
+        // call a dialog to choose the main family membe account for a sub-account
         parentIdChoose.addActionListener(__ -> AddMainMemberDialogView.showDig(this));
 
         startDateTextField.onSelect(__ -> {
+            // when choose the date, the expire date should be updated too
             updateExpireDate();
+
+            // update the fees with discount, if the promotion code is applied before
             String code = codeTextField.getText();
             Optional<Promotion> promotion = PromotionCodeService.findPromotionCodeOp(code);
-            if(promotion.isEmpty()) {
+
+            if (promotion.isEmpty()) {
                 updateFees();
                 return;
             }
+
             updateFeesWithDiscount();
         });
 
+        // when choose the duration, the expired date should be updated too
         durationComboBox.addActionListener(__ -> {
             updateExpireDate();
-            if(! apply) {
+            // if the flag is applied, update the fees with discount or keep original fee
+            if (!apply) {
                 updateFees();
                 return;
             }
 
             String code = codeTextField.getText();
             Optional<Promotion> promotion = PromotionCodeService.findPromotionCodeOp(code);
-            if(promotion.isEmpty()) {
+            if (promotion.isEmpty()) {
                 updateFees();
                 return;
             }
             updateFeesWithDiscount();
         });
 
+        // this callback will handle the promotion code to the calculation system if it is legal
         codeBtn.addActionListener(__ -> {
             String code = codeTextField.getText();
-            if(code == null || PromotionCodeService.findPromotionCodeOp(code).isEmpty()) {
+            // cover the NPE or the promotion code is illegal
+            if (code == null || PromotionCodeService.findPromotionCodeOp(code).isEmpty()) {
                 this.apply = false;
                 JOptionPane.showMessageDialog(
                         this, "Code Invalid", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            this.apply = true;
+            this.apply = true; // assign the flag to true that help update the fees
             updateFeesWithDiscount();
         });
 
+        // handle the form process of submission
         submit.addActionListener(__ -> {
+            // async to select the role details
             CompletableFuture<RoleDto> roleDtoCompletableFuture =
                     CompletableFuture.supplyAsync(
                             () -> {
@@ -494,7 +518,8 @@ public class AddMemberDialogView extends JDialog implements Validator {
                                 return DataSourceHandler.findRoleDtoByName(roleName);
                             });
 
-            if(! "".equals(this.valid())) {
+            // validates all the inputs (if there is an error, it will return a length string)
+            if (!"".equals(this.valid())) {
                 JOptionPane.showMessageDialog(
                         this, this.valid(), "Invalid Input", JOptionPane.INFORMATION_MESSAGE);
                 return;
@@ -526,10 +551,12 @@ public class AddMemberDialogView extends JDialog implements Validator {
                     JOptionPane.YES_NO_CANCEL_OPTION
             );
 
-            if(result != JOptionPane.YES_OPTION) {
+            // handle the cancel action
+            if (result != JOptionPane.YES_OPTION) {
                 return;
             }
 
+            // use the builder to build a customer object
             CustomerDto customerDto = new CustomerDto.Builder()
                     .id(memberIDTextField.getText())
                     .firstName(firstNameTextField.getText())
@@ -539,7 +566,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
                     .homeAddress(homeAddressTextField.getText())
                     .phoneNumber(phoneNumberTextField.getText())
                     .healthCondition(healthConditionTextField.getText())
-                    .type(roleDtoCompletableFuture.join())
+                    .type(roleDtoCompletableFuture.join()) // await the async task result here
                     .age(Integer.parseInt(yourAgeValue.getText()))
                     .startDate(startDateTextField.getDate())
                     .expireTime(DateUtil.str2Date(expireTimeValue.getText()))
@@ -547,14 +574,17 @@ public class AddMemberDialogView extends JDialog implements Validator {
                             Optional.ofNullable(durationComboBox.getSelectedItem())
                                     .map(String.class::cast)
                                     .map(Integer::parseInt)
-                                    .orElse(- 1))
+                                    .orElse(-1))
                     .parentId(parentIdValue.getText())
                     .fees(new BigDecimal(membershipFeesValue.getText()))
                     .build();
 
-            if(transfer) {
+            // judge this dialog is a transform situation
+            if (transfer) {
+                // call the transfer function (the transfer dto stores some information of a member)
                 MembershipService.transfer(transferDto.getId(), customerDto);
             } else {
+                // create a new account
                 MembershipService.createNew(customerDto);
             }
             this.dispose();
@@ -563,30 +593,43 @@ public class AddMemberDialogView extends JDialog implements Validator {
         cancel.addActionListener(__ -> this.dispose());
     }
 
+    /**
+     * this function will calculate age based on the date of birth picker and update the result to the view
+     */
     private void updateAge() {
         Date date = dateOfBirthTextField.getDate();
         int age = DateUtil.calculateAge(date);
         yourAgeValue.setText(String.valueOf(age));
     }
 
+    /**
+     * this function will calculate expire date based on the start date picker and update the result of the view
+     */
     private void updateExpireDate() {
         Date date = startDateTextField.getDate();
-        if(Objects.isNull(date)) {
+        // cover NPE
+        if (Objects.isNull(date)) {
             return;
         }
         String expireTime = DateUtil.plusMonths(date, Optional.ofNullable(durationComboBox.getSelectedItem())
                 .map(String.class::cast)
                 .map(Integer::parseInt)
-                .orElse(- 1));
+                .orElse(-1));
 
         expireTimeValue.setText(expireTime);
     }
 
+    /**
+     * this function will calculate fees based on the membership type, duration and mid(main member id only use for the family type)
+     * <p>
+     * 1. if the type is family member and choose a main account to link, the fee will not be charged
+     * 2. if the role type is illegal, this method will not calculate
+     */
     private void updateFees() {
         String type = (String) memberComBox.getSelectedItem();
         String duration = (String) durationComboBox.getSelectedItem();
         String mid = parentIdValue.getText();
-        if(DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(type) && "".equals(mid)) {
+        if (DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(type) && "".equals(mid)) {
             return;
         }
         BigDecimal fees = FeesService.getFees(type, duration);
@@ -596,10 +639,13 @@ public class AddMemberDialogView extends JDialog implements Validator {
         membershipFeesValue.setText(fees.toString());
     }
 
+    /**
+     * sames to the see@updateFees function, specially, when calculate the fees, it will render extra discount info in the view
+     */
     private void updateFeesWithDiscount() {
         String type = (String) memberComBox.getSelectedItem();
         String mid = parentIdValue.getText();
-        if(DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(type) && "".equals(mid)) {
+        if (DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(type) && "".equals(mid)) {
             return;
         }
         String duration = (String) durationComboBox.getSelectedItem();
@@ -614,12 +660,15 @@ public class AddMemberDialogView extends JDialog implements Validator {
 
     @Override
     public String valid() {
+        // create a validation map, configure an authentication rule for each field.
+        // The authentication order is determined by the put order
         Map<String, Validation> map = new LinkedHashMap<>();
         map.put("Member ID", new Validation(memberIDTextField.getText(), ValidationEnum.HAS_LEN));
         map.put("First Name", new Validation(firstNameTextField.getText(), ValidationEnum.HAS_LEN));
         map.put("Last Name", new Validation(lastNameTextField.getText(), ValidationEnum.HAS_LEN));
         map.put("Date of Birth", new Validation(dateOfBirthTextField.getDate(), ValidationEnum.NOT_NULL, ValidationEnum.NOT_GREATER_THAN_NOW));
-        if(DefaultDataConstant.DEFAULT_MEMBERS[0].getRoleName().equals(memberComBox.getSelectedItem())) {
+        // if membership type is individual, the age limitation is greater than 12, otherwise it should be older than 18
+        if (DefaultDataConstant.DEFAULT_MEMBERS[0].getRoleName().equals(memberComBox.getSelectedItem())) {
             map.put("Age", new Validation(yourAgeValue.getText(), ValidationEnum.GREATER_THAN_12));
         } else {
             map.put("Age", new Validation(yourAgeValue.getText(), ValidationEnum.GREATER_THAN_18));
@@ -627,17 +676,21 @@ public class AddMemberDialogView extends JDialog implements Validator {
         map.put("Phone Number", new Validation(phoneNumberTextField.getText(), ValidationEnum.HAS_LEN, ValidationEnum.UK_PHONE_NUMBER));
         map.put("Start Date", new Validation(startDateTextField.getDate(), ValidationEnum.NOT_NULL, ValidationEnum.NOT_GREATER_THAN_NOW));
 
+        // call the valid method, the return list will be empty if all inputs are correct
         List<String> errorMsg = ValidationEnum.valid(map);
-        if(errorMsg.isEmpty()) {
+        if (errorMsg.isEmpty()) {
             return "";
         }
+        // only get the top message need to be displayed on the dialog
         return errorMsg.get(0);
     }
 
+    // this inner class limits the input document only should be numbed type
     private static class NumberDocument extends PlainDocument {
         public void insertString(int var1, String var2, AttributeSet var3)
                 throws BadLocationException {
-            if(this.isNumeric(var2)) {
+            // only insert the value to the component if it is a number, otherwise call the system prompt
+            if (this.isNumeric(var2)) {
                 super.insertString(var1, var2, var3);
             } else {
                 Toolkit.getDefaultToolkit().beep();
@@ -648,7 +701,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
             try {
                 Long.valueOf(var1);
                 return true;
-            } catch(NumberFormatException var3) {
+            } catch (NumberFormatException var3) {
                 return false;
             }
         }

@@ -2,10 +2,17 @@ import java.math.BigDecimal;
 
 /**
  * @author lomofu
- * @desc
- * @create 08/Dec/2021 18:16
+ *
+ * This class deals with business logic related to fee list
  */
 public final class FeesService {
+    /**
+     * This method is used to calculate the fees based on the membership type and the duration
+     *
+     * @param memberType
+     * @param duration
+     * @return BigDecimal fee
+     */
     public static BigDecimal getFees(String memberType, String duration) {
         RoleDto roleDto = DataSourceHandler.findRoleDtoByName(memberType);
         BigDecimal feesPerMonth;
@@ -19,6 +26,14 @@ public final class FeesService {
         return feesPerMonth.multiply(dr);
     }
 
+    /**
+     * This method is used to calculate the fees based on the membership type, duration and the promotion code
+     *
+     * @param memberType
+     * @param duration
+     * @param code
+     * @return BigDecimal[] about discount fee and total fee
+     */
     public static BigDecimal[] getFees(String memberType, String duration, String code) {
         RoleDto roleDto = DataSourceHandler.findRoleDtoByName(memberType);
         BigDecimal feesPerMonth;

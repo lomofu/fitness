@@ -5,8 +5,8 @@ import java.util.List;
 /**
  * @author lomofu
  * <p>
- * This class is used to assign the different role(membership type) with virus choice.
- * It is related to the class see @Course and see @Role.
+ * This class is used to assign the different role(membership type) with virus choice
+ * It is related to the class see @Course and see @Role
  */
 public class AddCourseListDialogView extends JDialog {
 
@@ -14,7 +14,7 @@ public class AddCourseListDialogView extends JDialog {
         initDialog(owner);
         CourseTable courseTable = initCourseTable(roleDialogView);
 
-        // Initialize the layout of the table.
+        // Initialize the layout of the table
         Box verticalBox = Box.createVerticalBox();
         verticalBox.add(courseTable.getTitle());
         verticalBox.add(courseTable.getjToolBar());
@@ -27,7 +27,7 @@ public class AddCourseListDialogView extends JDialog {
 
     /**
      * This factory method will create a new dialog when click the "Add Course" Button on the
-     * see @RoleDialogView.
+     * see@RoleDialogView
      *
      * @param owner          the parent component
      * @param roleDialogView it will use the callback function 'setCourseList' to set the selections of course table(select mode)

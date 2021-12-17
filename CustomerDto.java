@@ -4,8 +4,8 @@ import java.util.Date;
 
 /**
  * @author lomofu
- * @desc
- * @create 28/Nov/2021 23:49
+ *
+ * This class is an extension of customer class
  */
 public class CustomerDto {
     private String id = "";
@@ -195,6 +195,9 @@ public class CustomerDto {
                 state);
     }
 
+    /**
+     * The builder design pattern help to build an object in an elegant way
+     */
     public static class Builder {
         private CustomerDto customerDto;
 

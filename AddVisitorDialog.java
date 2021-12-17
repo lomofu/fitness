@@ -1,14 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.Optional;
-//todo
-
 
 /**
  * @author lomofu
- * @desc
+ * <p>
+ * This class is used to add a visitor
+ * It will create the dialog when click the add visitor card on the home page
  */
 public class AddVisitorDialog extends JDialog {
+    // define the default gap for each component in the layout
     private static final int X_GAP = 20;
     private static final int Y_GAP = 20;
 
@@ -40,9 +41,9 @@ public class AddVisitorDialog extends JDialog {
     }
 
     /**
-     * This factory method will create a new dialog when click the Add Button on the
-     * see
-     * @param owner
+     * This factory method will create a new dialog when click the add visitor card on the home page
+     *
+     * @param owner parent component
      */
     public static void showDig(Frame owner) {
         AddVisitorDialog addVisitorDialog = new AddVisitorDialog(owner);
@@ -56,7 +57,7 @@ public class AddVisitorDialog extends JDialog {
         this.setResizable(true);
         this.setLocationRelativeTo(owner);
         this.setAlwaysOnTop(true);
-        this.setModal(true);
+        this.setModal(true); // make this dialog on the top
     }
 
     private void initFormElements() {
@@ -73,6 +74,7 @@ public class AddVisitorDialog extends JDialog {
         initMemberInfoCard();
         initSpringLayout(panel);
 
+        // add the components to the panel
         panel.add(memberIdLabel);
         panel.add(memberIDBox);
         panel.add(yourAge);
@@ -85,6 +87,7 @@ public class AddVisitorDialog extends JDialog {
     }
 
     private void initMemberInfoCard() {
+        // use box for layout
         Box box = getHBox(feesLabel, feesValue);
         Box box1 = getHBox(mainLabel, mainValue);
         Box verticalBox = Box.createVerticalBox();
@@ -93,16 +96,22 @@ public class AddVisitorDialog extends JDialog {
         verticalBox.add(Box.createVerticalStrut(10));
         verticalBox.add(box1);
 
+        // use the Spring to calculate the width of the memberIdLabel + memberIDBox + const X_GAP (20)
         int myCardWidth =
                 Spring.sum(Spring.sum(Spring.width(memberIdLabel), Spring.width(memberIDBox)), Spring.constant(X_GAP))
                         .getValue();
+        // use the Spring to calculate the height of the verticalBox + const Y_GAP (20) * 3
         int myCardHeight =
                 Spring.sum(Spring.height(verticalBox), Spring.constant(Y_GAP * 3)).getValue();
 
+        // set the myCard height and width
         myCard.setCSize(myCardWidth, myCardHeight);
         myCard.addC(verticalBox);
     }
 
+    /**
+     *  this function will create a HorizontalBox filled with two labels
+     */
     private Box getHBox(JLabel label, JLabel value) {
         Box box = Box.createHorizontalBox();
         box.add(label);
@@ -111,12 +120,20 @@ public class AddVisitorDialog extends JDialog {
         return box;
     }
 
-    private void initSpringLayout(JPanel panel) {
-        Spring childWidth = Spring.sum(Spring.sum(Spring.width(memberIdLabel), Spring.width(memberIDBox)),
-                Spring.constant(X_GAP));
 
+    private void initSpringLayout(JPanel panel) {
+        // use the Spring to calculate the width of the memberIdLabel width + memberIDBox width + const X_GAP (20)
+        Spring childWidth =
+                Spring.sum(
+                        Spring.sum(Spring.width(memberIdLabel), Spring.width(memberIDBox)),
+                        Spring.constant(X_GAP));
+
+        // pack the first row
         initMemberIdRow(panel, childWidth);
+
         initChildRow(memberIdLabel, yourAge, ageCheckBox);
+
+        // use the spring layout to put constraint
         springLayout.putConstraint(SpringLayout.WEST, myCard, 0, SpringLayout.WEST, memberIdLabel);
         springLayout.putConstraint(SpringLayout.NORTH, myCard, Y_GAP, SpringLayout.SOUTH, yourAge);
 
@@ -143,27 +160,42 @@ public class AddVisitorDialog extends JDialog {
                 SpringLayout.WEST, memberIDBox, X_GAP, SpringLayout.EAST, memberIdLabel);
     }
 
+    /**
+     * The function abstract a row with a JLabel and a component (most are the JTextFields)
+     *
+     * @param refer     the reference label
+     * @param label     the label need to put constraint
+     * @param component the component need to put constraint
+     */
     private void initChildRow(JLabel refer, JLabel label, Component component) {
-        // align with refer
+        // let the label align to refer
         springLayout.putConstraint(SpringLayout.EAST, label, 0, SpringLayout.EAST, refer);
         springLayout.putConstraint(SpringLayout.NORTH, label, Y_GAP, SpringLayout.SOUTH, refer);
 
+        // let the component align to label
         springLayout.putConstraint(SpringLayout.NORTH, component, 0, SpringLayout.NORTH, label);
         springLayout.putConstraint(SpringLayout.WEST, component, X_GAP, SpringLayout.EAST, label);
     }
 
+    /**
+     * This function manger all the callback events of the components
+     */
     private void initListener() {
         cancel.addActionListener(__ -> this.dispose());
 
+        // check if the visitor is over 12 years old and update the result to the view
         ageCheckBox.addActionListener(__ -> updateMemberStateWithAge());
 
+        //  check if the member id is existed and update the result to the view
         applyBtn.addActionListener(__ -> updateMemberStateWithApply());
 
+        // handle the form process of submission
         submit.addActionListener(__ -> {
             String memberId = mainValue.getText();
-            boolean isUpper24 = ageCheckBox.isSelected();
+            boolean isUpper12 = ageCheckBox.isSelected();
 
-            if("".equals(memberId) && ! isUpper24) {
+            // If the visitor is under 12 years of age and is not accompanied by a member, they will not be able to enter
+            if("".equals(memberId) && !isUpper12) {
                 JOptionPane.showMessageDialog(
                         this, """
                                 No access permission
@@ -175,7 +207,8 @@ public class AddVisitorDialog extends JDialog {
                 return;
             }
 
-            if(! "".equals(memberId) && isUpper24) {
+            // If the visitor is over 12 years old and also fills in the membership ID, the operation is invalid
+            if(! "".equals(memberId) && isUpper12) {
                 JOptionPane.showMessageDialog(
                         this, """
                                 Invalid operation
@@ -207,6 +240,13 @@ public class AddVisitorDialog extends JDialog {
         });
     }
 
+    /**
+     * this function will check three situations about the application of the membership id:
+     *
+     * 1. If the Apply button is clicked without filling in the membership ID, the operation is invalid
+     * 2. If the member ID is not found after entering it and clicking the Apply button, the application of the member ID fails
+     * 3. If the member ID entered exists, the application  is successful
+     */
     private void updateMemberStateWithApply() {
         String memberId = memberIDTextField.getText();
         if("".equals(memberId)) {
@@ -227,17 +267,25 @@ public class AddVisitorDialog extends JDialog {
         feesValue.setText("0");
     }
 
+    /**
+     * this function will check four situations about the check of the age and the application of the member id:
+     *
+     * 1. If the visitor is over 12 years old or has not entered a membership ID, a charge will apply
+     * 2. If the membership number exists and the visitor is under 12 years old, there is no charge
+     * 3. If the member ID does not exist but the visitor is over 12 years old, a charge will apply
+     * 4. In case of no operation, the charge shows 0, waiting for other verification
+     */
     private void updateMemberStateWithAge() {
         String memberId = memberIDTextField.getText();
-        boolean isUpper24 = ageCheckBox.isSelected();
-        if("".equals(memberId) || isUpper24) {
+        boolean isUpper12 = ageCheckBox.isSelected();
+        if("".equals(memberId) || isUpper12) {
             feesValue.setText(DefaultDataConstant.VISITOR_FEES.toString());
         }
 
         Optional<CustomerDto> op = MembershipService.findCustomerByIdOp(memberId);
-        if(op.isPresent() && ! isUpper24) {
+        if(op.isPresent() && !isUpper12) {
             feesValue.setText("0");
-        } else if(op.isEmpty() && isUpper24) {
+        } else if(op.isEmpty() && isUpper12) {
             feesValue.setText(DefaultDataConstant.VISITOR_FEES.toString());
         } else {
             feesValue.setText("0");

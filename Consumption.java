@@ -3,8 +3,8 @@ import java.util.Objects;
 
 /**
  * @author jiaqi fu
- * @desc This record(since java14) will store each consumption, which can only be stored but cannot edit.
- * @create 27/Nov/2021 13:54
+ *
+ * This record(since java14) will store each consumption, which can only be stored but cannot edit.
  */
 public record Consumption(String orderId, String consumer, String memberId, String createTime, String fees) {
     @Override

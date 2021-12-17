@@ -12,10 +12,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+// todo
 /**
  * @author lomofu
- * @desc
- * @create 23/Nov/2021 11:19
+ *
  */
 @SuppressWarnings("unchecked")
 public class DataSource implements ActionListener {

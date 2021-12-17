@@ -5,8 +5,13 @@ import java.util.function.Consumer;
 
 /**
  * @author lomofu
- * @desc
- * @create 23/Nov/2021 10:48
+ * <p>
+ * This class set the home panel and implement related functions
+ * <p>
+ * extends@MyPanel: extends abstract panel function
+ * implements@DataSourceChannel: let this object be observer to observe the source change
+ * and call back the override onchange functions(mainly update the UI).
+ * Meanwhile, it will subscrib the data source when home panel init
  */
 public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
     private final Box firstRow = Box.createHorizontalBox();
@@ -42,6 +47,9 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
         initSecondBox();
     }
 
+    /**
+     * This method creates a box container to hold the statistical content
+     */
     private void initFirstBox() {
         Statistics statistics = StatisticsService.get();
 
@@ -85,6 +93,11 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
         firstRow.add(verticalBox);
     }
 
+    /**
+     * This method init six cards related to corresponding data statistics result
+     *
+     * @param statistics
+     */
     private void initCards(Statistics statistics) {
         turnover = initTextCard("Total Turnover today",
                 statistics.getFees(),
@@ -133,6 +146,9 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
         promotionCode.setBorderColor(Color.WHITE);
     }
 
+    /**
+     * This method creates a box container to hold the visitor add function panel
+     */
     private void initSecondBox() {
         Box verticalBox = Box.createVerticalBox();
         Box labelBox = Box.createHorizontalBox();
@@ -168,6 +184,14 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
         secondRow.add(verticalBox);
     }
 
+    /**
+     * This method is used to set the count card info
+     *
+     * @param title
+     * @param number
+     * @param consumer
+     * @return countCard
+     */
     private MyTextCard initCountCard(String title, int number, Consumer<MouseEvent> consumer) {
         var width = panelWidth / 4;
         MyTextCard countCard = new MyTextCard(title, width, 300, consumer);
@@ -176,6 +200,14 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
         return countCard;
     }
 
+    /**
+     * This method is used to set the text card info
+     *
+     * @param title
+     * @param number
+     * @param consumer
+     * @return textCard
+     */
     private MyTextCard initTextCard(String title, String number, Consumer<MouseEvent> consumer) {
         var width = panelWidth / 4;
         MyTextCard textCard = new MyTextCard(title, width, 300, consumer);
@@ -184,6 +216,9 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
         return textCard;
     }
 
+    /**
+     * This method refresh the data from data source
+     */
     private void fetchData() {
         Statistics statistics = StatisticsService.get();
         totalMembers.setValue(statistics.getFees());
@@ -194,11 +229,24 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
         promotionCode.setValue(statistics.getPromotionCode());
     }
 
+    /**
+     * This method override the observer hook function if the corresponding data in
+     * data source has mutable.
+     *
+     * @param statistics parameter from data source of
+     *                   which consumptions object has been changed(only have value if is a update operation)
+     * @param flag       operation type
+     */
     @Override
     public void onDataChange(Statistics statistics, DataManipulateEnum flag) {
         fetchData();
     }
 
+    /**
+     * This method subscribe data source when the object is init
+     *
+     * @param statisticsClass Statistics.class
+     */
     @Override
     public void subscribe(Class<Statistics> statisticsClass) {
         DataSource.subscribe(new DataSourceChannelInfo<>(this, statisticsClass));

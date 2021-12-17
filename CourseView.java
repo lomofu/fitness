@@ -3,16 +3,18 @@ import java.awt.*;
 
 /**
  * @author lomofu
- * @desc
- * @create 29/Nov/2021 04:14
+ * <p>
+ * * This class set the layout and the components of course panel
  */
 public class CourseView extends MyPanel {
     public CourseView(ClubFrameView clubFrameView) {
         super(new BorderLayout());
 
+        // init the course table
         MyTable courseTable = new CourseTable(clubFrameView, "Course Table", UIConstant.COURSE_COLUMNS,
                 CourseService.findCoursesForTableRender(), UIConstant.COURSE_SEARCH_FILTER_COLUMNS);
 
+        // set the layout of the panel
         Box verticalBox = Box.createVerticalBox();
         verticalBox.add(courseTable.getTitle());
         verticalBox.add(courseTable.getjToolBar());
