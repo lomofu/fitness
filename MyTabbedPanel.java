@@ -4,10 +4,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 
+//todo
 /**
  * @author lomofu
- * @desc
- * @create 23/Nov/2021 11:35
+ *
  */
 public class MyTabbedPanel extends JTabbedPane implements ChangeListener {
 

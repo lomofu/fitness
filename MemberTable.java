@@ -11,11 +11,11 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+//todo
 /**
  * @author lomofu
- * @desc
- * @create 26/Nov/2021 01:05
+ *
+ *
  */
 public class MemberTable extends MyTable implements DataSourceChannel<CustomerDto>, ActionListener {
     private AddMemberDialogView addMemberDialogView;

@@ -1,9 +1,11 @@
 /**
  * @author lomofu
- * @desc
- * @create 08/Dec/2021 17:53
+ * <p>
+ * This record packs the input value and validation rules
+ * see@ValidationEnum
  */
 public record Validation(
         Object value,
         ValidationEnum... validationEnum
-){}
+) {
+}

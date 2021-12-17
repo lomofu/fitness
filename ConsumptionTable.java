@@ -51,7 +51,7 @@ public class ConsumptionTable extends MyTable implements DataSourceChannel<Consu
     }
 
     /**
-     * This method define the buttons with handle actions in the toolbar
+     * This method defines the buttons with handle actions in the toolbar
      */
     @Override
     protected void addComponentsToToolBar() {
@@ -256,7 +256,7 @@ public class ConsumptionTable extends MyTable implements DataSourceChannel<Consu
     }
 
     /**
-     * This method override the observer hook function if the corresponding data in
+     * This method overrides the observer hook function if the corresponding data in
      * data source has mutable.
      *
      * @param consumption parameter from data source of

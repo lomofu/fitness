@@ -2,26 +2,48 @@ import java.util.Optional;
 
 /**
  * @author lomofu
- * @desc
- * @create 11/Dec/2021 19:25
+ * <p>
+ * This class deals with business logic related to role list
  */
 public final class RoleService {
+    /**
+     * This method add roleDto into data source
+     *
+     * @param roleDto roleDto object
+     */
     public static void createNew(RoleDto roleDto) {
         DataSource.add(roleDto);
     }
 
+    /**
+     * This method find role information with the role id
+     *
+     * @param roleId
+     * @return an option container with role information to handle NPE
+     */
     public static Optional<RoleDto> findRoleDtoByIdOp(String roleId) {
         return DataSource.getRoleList().stream().filter(e -> e.getRoleId().equals(roleId))
                 .findFirst();
     }
 
+    /**
+     * Assert that the return value will always have values
+     * sames to the optional but not cover NPE
+     *
+     * @param roleId role id
+     * @return role details
+     */
     public static RoleDto findRoleDtoById(String roleId) {
         return DataSource.getRoleList().stream().filter(e -> e.getRoleId().equals(roleId))
                 .findFirst()
                 .get();
     }
 
-
+    /**
+     * This method converses two dim arrays for table render
+     *
+     * @return a two dim array
+     */
     public static Object[][] findRoles() {
         return DataSource.getRoleList().stream()
                 .map(e -> new Object[]{
@@ -38,6 +60,11 @@ public final class RoleService {
                 .toArray(size -> new Object[size][UIConstant.ROLE_COLUMNS.length]);
     }
 
+    /**
+     * This method update role info in data source
+     *
+     * @param roleDto roleDto object
+     */
     public static void update(RoleDto roleDto) {
         RoleDto roleDtoById = findRoleDtoById(roleDto.getRoleId());
         roleDtoById.setRoleName(roleDto.getRoleName());

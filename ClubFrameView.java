@@ -34,7 +34,7 @@ public class ClubFrameView extends JFrame {
     }
 
     /**
-     * This method set the length of progress bar
+     * This method sets the length of progress bar
      *
      * @param count
      */
@@ -45,7 +45,7 @@ public class ClubFrameView extends JFrame {
     }
 
     /**
-     * This method exposure the progress bar
+     * This method exposures the progress bar
      */
     public static void updateProgressBar() {
         try {
@@ -63,7 +63,7 @@ public class ClubFrameView extends JFrame {
     }
 
     /**
-     * This method finish the progress bar
+     * This method finishes the progress bar
      */
     public static void removeSyncState() {
         try {
@@ -94,7 +94,7 @@ public class ClubFrameView extends JFrame {
     }
 
     /**
-     * This method initialize the tab of different data statistics view
+     * This method initializes the tab of different data statistics view
      */
     private void initTabs() {
         this.leftMenuView.addTab(

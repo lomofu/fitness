@@ -1,8 +1,9 @@
 /**
  * @author lomofu
- * @desc
- * @create 24/Nov/2021 04:09
+ * <p>
+ * This class defines the common constants in the system UI
  */
+
 public final class UIConstant {
     public static final String SYSTEM_NAME = "CLUB OS";
     public static final String DATE_FORMAT = "dd/MM/yyyy";
@@ -184,5 +185,7 @@ public final class UIConstant {
 
     };
 
-    private UIConstant() {}
+    private UIConstant() {
+        // do nothing
+    }
 }

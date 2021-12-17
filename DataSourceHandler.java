@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author lomofu
- *
+ * <p>
  * This class is used to take over the data processing between the UI layer and the Dao layer
  * Therefore, different data types are required for different scenarios and are written in this class to reduce coupling
  */
@@ -20,7 +20,7 @@ public class DataSourceHandler {
      * @return course list
      */
     public static List<Course> findCoursesByCourseName(String courses) {
-        if(courses == null || "".equals(courses)) {
+        if (courses == null || "".equals(courses)) {
             return new ArrayList<>();
         }
         String[] courseId = courses.split("\\|"); // split the string into a course name list
@@ -34,6 +34,12 @@ public class DataSourceHandler {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * This method is used to find role details by role id
+     *
+     * @param roleId role id
+     * @return role details
+     */
     public static RoleDto findRoleDtoById(String roleId) {
         return DataSource.getRoleList()
                 .stream()
@@ -42,6 +48,13 @@ public class DataSourceHandler {
                 .orElse(new RoleDto());
     }
 
+
+    /**
+     * This method is used to find role details by role name
+     *
+     * @param roleName role name
+     * @return role details
+     */
     public static RoleDto findRoleDtoByName(String roleName) {
         return DataSource.getRoleList()
                 .stream()
@@ -50,6 +63,11 @@ public class DataSourceHandler {
                 .orElse(new RoleDto());
     }
 
+    /**
+     * This method is used to find role details of all
+     *
+     * @return role details array
+     */
     public static String[] findRoleDtoList() {
         return DataSource.getRoleList()
                 .stream()

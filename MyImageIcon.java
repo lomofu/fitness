@@ -1,16 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.Base64;
-
+//todo
 /**
  * @author lomofu
- * @desc
- * @create 23/Nov/2021 22:12
+ *
+ * This class
  */
 public final class MyImageIcon {
     public static final int DEFAULT_ICON_WIDTH = 18;
     public static final int DEFAULT_ICON_HEIGHT = 18;
 
+    /**
+     *
+     * @param iconSrc
+     * @return
+     */
     public static ImageIcon build(String iconSrc) {
         byte[] imageSrc = Base64.getDecoder().decode(iconSrc);
         ImageIcon imageIcon = new ImageIcon(imageSrc);
@@ -21,6 +26,14 @@ public final class MyImageIcon {
         return new ImageIcon(newImg);
     }
 
+    /**
+     *
+     *
+     * @param iconSrc
+     * @param width
+     * @param height
+     * @return
+     */
     public static ImageIcon build(String iconSrc, int width, int height) {
         byte[] imageSrc = Base64.getDecoder().decode(iconSrc);
         ImageIcon imageIcon = new ImageIcon(imageSrc);

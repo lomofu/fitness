@@ -3,16 +3,14 @@ import java.awt.*;
 
 /**
  * @author lomofu
- * @desc
- * @create 22/Nov/2021 22:52
+ * <p>
+ * This class defines a common JPanel for use
  */
 public class MyPanel extends JPanel {
-  public MyPanel() {}
-  public MyPanel(LayoutManager layoutManager) {
-    super(layoutManager);
-  }
+    public MyPanel() {
+    }
 
-  public void setMargin(int top, int left, int bottom, int right) {
-    this.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
-  }
+    public MyPanel(LayoutManager layoutManager) {
+        super(layoutManager);
+    }
 }

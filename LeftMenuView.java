@@ -8,8 +8,8 @@ import java.util.stream.IntStream;
 
 /**
  * @author lomofu
- *
- * This class
+ * <p>
+ * This class set the left menu panel
  */
 public class LeftMenuView extends JPanel {
     private final List<MyMenuButton> MY_BUTTONS = new ArrayList<>(UIConstant.MENU_LIST.length);
@@ -19,9 +19,11 @@ public class LeftMenuView extends JPanel {
     private int panelHeight;
 
     public LeftMenuView(int frameWidth, int frameHeight) {
+        // set the panel size
         panelWidth = (int) (frameWidth * 0.15);
         panelHeight = (int) (frameHeight * 0.15);
 
+        // set the layout of panel as gridlayout
         this.setLayout(new GridLayout(10, 1));
         this.setBackground(ColorConstant.PANTONE433C);
         this.setPreferredSize(new Dimension(panelWidth, panelHeight));
@@ -34,6 +36,7 @@ public class LeftMenuView extends JPanel {
         this.MY_BUTTONS.forEach(this::add);
     }
 
+    // set the logo
     private JLabel initLogo() {
         JLabel logoLabel = new JLabel(UIConstant.SYSTEM_NAME, JLabel.CENTER);
         logoLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
@@ -41,6 +44,7 @@ public class LeftMenuView extends JPanel {
         return logoLabel;
     }
 
+    // set the button of each option
     private void initButtons() {
         for (String[] strings : UIConstant.MENU_LIST) {
             MY_BUTTONS.add(
@@ -48,6 +52,7 @@ public class LeftMenuView extends JPanel {
                             strings[0], MyImageIcon.build(strings[1], UIConstant.MENU_ICON_SIZE, UIConstant.MENU_ICON_SIZE)));
         }
 
+        // loop injection of events
         IntStream.range(0, this.MY_BUTTONS.size())
                 .forEachOrdered(
                         i -> MY_BUTTONS.get(i).addActionListener(e -> tabbedPane.setSelectedIndex(i)));
@@ -66,6 +71,9 @@ public class LeftMenuView extends JPanel {
         return tabbedPane;
     }
 
+    /**
+     * This class customize the left menu items including a 32 pix icon, text and interaction
+     */
     private static class MyMenuButton extends JButton implements MouseListener {
         public MyMenuButton(String label, ImageIcon imageIcon) throws HeadlessException {
             super(label, imageIcon);
@@ -83,16 +91,24 @@ public class LeftMenuView extends JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
+            // do nothing
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
+            // do nothing
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            // do nothing
         }
 
+        /**
+         * This method handle the mouse enter event
+         *
+         * @param e mouse event
+         */
         @Override
         public void mouseEntered(MouseEvent e) {
             JButton component = (JButton) e.getComponent();
@@ -102,6 +118,11 @@ public class LeftMenuView extends JPanel {
             component.setFont(new Font(Font.DIALOG, Font.BOLD, this.getFont().getSize()));
         }
 
+        /**
+         * This method handle the mouse exit event
+         *
+         * @param e mouse event
+         */
         @Override
         public void mouseExited(MouseEvent e) {
             JButton component = (JButton) e.getComponent();

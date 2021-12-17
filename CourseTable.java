@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * @author lomofu
  * <p>
- * This class set the course table and implement related functions
+ * This class sets the course table and implement related functions
  * <p>
  * extends@MyTable: extends abstract table function
  * implements@DataSourceChannel: let this object be observer to observe the data source change
@@ -52,14 +52,14 @@ public class CourseTable extends MyTable implements DataSourceChannel<Course> {
     }
 
     /**
-     * This method set edit events and help events
+     * This method sets edit events and help events
      */
     private void initMyEvents() {
         this.jTable.getSelectionModel().addListSelectionListener(e -> {
             Component[] jToolBarComponents = jToolBar.getComponents();
             Component editBtn = jToolBarComponents[2];
 
-            // If a course is selected, the Edit button is available
+            // If more than one courses are selected, the Edit button is unavailable
             if (jTable.getSelectedRowCount() > 0) {
                 editBtn.setEnabled(false);
             }

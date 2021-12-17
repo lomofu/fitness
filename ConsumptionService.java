@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  */
 public final class ConsumptionService {
     /**
-     * This method create a new consumption
+     * This method creates a new consumption
      *
      * @param memberId relate to the member of this consumption
      * @param fullName member full name
@@ -23,7 +23,7 @@ public final class ConsumptionService {
     }
 
     /**
-     * This method use stream API since java 8 to converse two dim arrays for JTable to render
+     * This method uses stream API since java 8 to converse two dim arrays for JTable to render
      * The sort is descending order of the creat time
      *
      * @return a two dim array

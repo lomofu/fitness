@@ -3,22 +3,24 @@ import java.awt.*;
 
 /**
  * @author lomofu
- * @desc
- * @create 23/Nov/2021 11:56
+ * <p>
+ * This class set the layout and the components of membership panel
  */
 public class MemberView extends MyPanel {
 
     public MemberView(ClubFrameView clubFrameView) {
         super(new BorderLayout());
 
+        // init the member table
         MyTable memberTable =
                 new MemberTable(
                         clubFrameView,
                         "Membership Table",
                         UIConstant.MEMBER_COLUMNS,
                         MembershipService.findMembersForTableRender());
-        Box verticalBox = Box.createVerticalBox();
 
+        // set the layout of the panel
+        Box verticalBox = Box.createVerticalBox();
         verticalBox.add(memberTable.getTitle());
         verticalBox.add(memberTable.getjToolBar());
         verticalBox.add(Box.createVerticalStrut(10));

@@ -4,7 +4,7 @@ import java.awt.*;
 /**
  * @author lomofu
  * <p>
- * * This class set the layout and the components of course panel
+ * This class sets the layout and the components of the course panel
  */
 public class CourseView extends MyPanel {
     public CourseView(ClubFrameView clubFrameView) {

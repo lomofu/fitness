@@ -1,7 +1,6 @@
-
 /**
  * @author lomofu
- *
+ * <p>
  * This enum list two state of a membership
  */
 public enum CustomerSateEnum {
@@ -13,6 +12,7 @@ public enum CustomerSateEnum {
         this.name = name;
     }
 
+    // getter
     public String getName() {
         return name;
     }

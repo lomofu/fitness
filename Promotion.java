@@ -2,14 +2,16 @@ import java.text.MessageFormat;
 
 /**
  * @author lomofu
- * @desc
- * @create 29/Nov/2021 03:51
+ * <p>
+ * This class stores each promotion details
  */
 public class Promotion {
     private String promotionId;
     private String promotionCode;
     private String promotionType;
     private String value;
+
+    //getter and setter
 
     public String getPromotionId() {
         return promotionId;

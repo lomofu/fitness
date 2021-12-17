@@ -4,8 +4,8 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lomofu
- * @desc
- * @create 10/Dec/2021 02:21
+ * <p>
+ * This class is a logger util
  */
 public class Logger {
     public static final String RED = "\033[0;31m";

@@ -1,7 +1,7 @@
 /**
  * @author lomofu
- * @desc
- * @create 12/Dec/2021 03:39
+ * <p>
+ * This class stores each visitor details with two fields
  */
 public class Visitor {
     private String date = "";

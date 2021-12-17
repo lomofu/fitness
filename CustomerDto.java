@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * @author lomofu
- *
+ * <p>
  * This class is an extension of customer class
  */
 public class CustomerDto {
@@ -25,7 +25,9 @@ public class CustomerDto {
     private String state = "";
     private String parentId = "";
 
-    public CustomerDto() {}
+    public CustomerDto() {
+        // do nothing
+    }
 
     public CustomerDto(CustomerDto customerDto) {
         this.id = customerDto.id;
@@ -46,6 +48,7 @@ public class CustomerDto {
         this.parentId = customerDto.parentId;
     }
 
+    // getter and setter
     public String getId() {
         return id;
     }

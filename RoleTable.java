@@ -6,10 +6,16 @@ import java.util.Arrays;
 
 /**
  * @author lomofu
- * @desc
- * @create 28/Nov/2021 23:35
+ * <p>
+ * This class sets the role table and implement related functions
+ * <p>
+ * extends@MyTable: extends abstract table function
+ * implements@DataSourceChannel: let this object be observer to observe the data source change
+ * and call back the override onchange functions(mainly update the UI).
+ * Meanwhile, it will subscrib the data source when table init
  */
 public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
+    // default table model have full functions
     public RoleTable(
             ClubFrameView clubFrameView,
             String title,
@@ -21,6 +27,9 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
         initMyEvents();
     }
 
+    /**
+     * This method adds some buttons into the toolbar
+     */
     @Override
     protected void addComponentsToToolBar() {
         JButton addRoleBtn =
@@ -64,6 +73,9 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
         this.jToolBar.add(this.searchBox);
     }
 
+    /**
+     * This method sets remove events, edit events and help events
+     */
     private void initMyEvents() {
         this.jTable.getSelectionModel().addListSelectionListener(e -> {
             Component[] jToolBarComponents = jToolBar.getComponents();
@@ -86,13 +98,20 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
 
     @Override
     protected void addComponentsToFilterBar() {
+        // do nothing
     }
 
+    /**
+     * This method is used to monitor right mouse click events
+     *
+     * @param e mouse event
+     */
     @Override
     protected void onRightClick(MouseEvent e) {
         JTable table = (JTable) e.getSource();
         int[] selectedRows = table.getSelectedRows();
 
+        // If the mouse is right-clicked without a row selected, no action is taken
         if (selectedRows.length == 0) {
             return;
         }
@@ -100,10 +119,12 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
         Point point = e.getPoint();
         int row = table.rowAtPoint(point);
 
+        // If no right mouse click is made on the selected row, no action is taken.
         if (Arrays.stream(selectedRows).filter(v -> v == row).findAny().isEmpty()) {
             return;
         }
 
+        // If the right mouse click is made with individual rows selected, the menu option is displayed
         if (selectedRows.length == 1) {
             table.setRowSelectionInterval(row, row);
             TablePopMenu popMenu = getSingleTablePopMenu();
@@ -111,6 +132,7 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
         }
     }
 
+    // create a select menu with edit and view info option
     private TablePopMenu getSingleTablePopMenu() {
         return new TablePopMenu() {
             @Override
@@ -126,19 +148,31 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
         };
     }
 
+    // create a role info dialog when double-click the mouse on the selected row
     @Override
     protected void onDoubleClick(MouseEvent e) {
         CheckRoleDialogView.showDig(clubFrameView, (String) jTable.getModel().getValueAt(jTable.convertRowIndexToModel(jTable.getSelectedRow()), 0));
     }
 
+    /**
+     * This method override the observer hook function if the corresponding data in
+     * data source has mutable.
+     *
+     * @param roleDto parameter from data source of
+     *                which role object has been changed(only have value if is a update operation)
+     * @param flag    operation type
+     */
     @Override
-    public void onDataChange(RoleDto e, DataManipulateEnum flag) {
+    public void onDataChange(RoleDto roleDto, DataManipulateEnum flag) {
         switch (flag) {
             case INSERT -> insert();
             case UPDATE, DELETE -> SwingUtilities.invokeLater(this::fetchData);
         }
     }
 
+    /**
+     * This method refresh the data from data source
+     */
     private void fetchData() {
         Component[] jToolBarComponents = jToolBar.getComponents();
         Component editBtn = jToolBarComponents[2];
@@ -151,6 +185,9 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
         super.setTableStyle();
     }
 
+    /**
+     * This method is a call back for the insert action
+     */
     private void insert() {
         SwingUtilities.invokeLater(() -> {
             fetchData();
@@ -159,6 +196,11 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
         });
     }
 
+    /**
+     * This method subscribe data source when the object is init
+     *
+     * @param roleDtoClass roleDto.class
+     */
     @Override
     public void subscribe(Class<RoleDto> roleDtoClass) {
         DataSource.subscribe(new DataSourceChannelInfo<>(this, roleDtoClass));
