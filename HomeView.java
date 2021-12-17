@@ -190,6 +190,7 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
      * @param title
      * @param number
      * @param consumer
+     *
      * @return countCard
      */
     private MyTextCard initCountCard(String title, int number, Consumer<MouseEvent> consumer) {
@@ -206,6 +207,7 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
      * @param title
      * @param number
      * @param consumer
+     *
      * @return textCard
      */
     private MyTextCard initTextCard(String title, String number, Consumer<MouseEvent> consumer) {
@@ -221,9 +223,9 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
      */
     private void fetchData() {
         Statistics statistics = StatisticsService.get();
-        totalMembers.setValue(statistics.getFees());
+        turnover.setValue(statistics.getFees());
         activeUsers.setValue(statistics.getActiveUsers());
-        turnover.setValue(statistics.getUsers());
+        totalMembers.setValue(statistics.getUsers());
         visitors.setValue(statistics.getVisitors());
         courses.setValue(statistics.getCourses());
         promotionCode.setValue(statistics.getPromotionCode());
