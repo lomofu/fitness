@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is a main frame of the whole application
  */

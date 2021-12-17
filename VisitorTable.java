@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class set the visitor table and implement related functions
  * <p>

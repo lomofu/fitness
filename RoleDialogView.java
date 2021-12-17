@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * * This class is used to create a new role or edit role
  */

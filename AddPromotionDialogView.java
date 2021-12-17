@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is used to create a new promotion code
  */

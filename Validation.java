@@ -1,5 +1,5 @@
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This record packs the input value and validation rules
  * see@ValidationEnum

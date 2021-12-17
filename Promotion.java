@@ -1,7 +1,7 @@
 import java.text.MessageFormat;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class stores each promotion details
  */

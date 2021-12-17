@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.Optional;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is used to display a particular membership information
  */

@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class sets the layout and the components of the role panel
  */

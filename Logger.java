@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is a logger util
  */

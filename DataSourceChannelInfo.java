@@ -1,5 +1,5 @@
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class wraps the parameters required for a subscription
  * The most important things to know is T.class

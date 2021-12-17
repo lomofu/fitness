@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is an extension of role class
  */

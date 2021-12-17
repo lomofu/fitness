@@ -4,7 +4,7 @@ import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  *
  * This class sets the welcome panel
  */

@@ -2,7 +2,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class deals with business logic related to course list
  */

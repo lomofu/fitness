@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * this class handle the csv io for the whole system
  */
@@ -97,6 +97,7 @@ public final class CSVUtil {
                     try {
                         return CSVUtil.assignValueFromFile(e, clazz);
                     } catch(Exception ex) {
+                        Logger.error(ex.getMessage());
                         throw new RuntimeException("Cannot assign the value");
                     }
                 })
@@ -133,6 +134,7 @@ public final class CSVUtil {
                     try {
                         return CSVUtil.assignValueFromFile(e, clazz);
                     } catch(Exception ex) {
+                        Logger.error(ex.getMessage());
                         throw new RuntimeException("Cannot assign the value");
                     }
                 })
@@ -235,11 +237,8 @@ public final class CSVUtil {
                     Files.newBufferedWriter(writePath, StandardCharsets.UTF_8)) {
             // iterate the data to write each object as a row
             for(T t : data) {
-                bufferedWriter.write(t.toString());
-                bufferedWriter.newLine();
+                bufferedWriter.write(t.toString() + "\n");
             }
-            // clear the buffer pool
-            bufferedWriter.flush();
         } catch(IOException e) {
             // cover the io exception when write the file
             Logger.error(e.getMessage());

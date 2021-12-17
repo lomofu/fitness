@@ -1,7 +1,7 @@
 import java.awt.*;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  *
  * This method defines some colour constants used in the system
  */

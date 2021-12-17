@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class set the left menu panel
  */

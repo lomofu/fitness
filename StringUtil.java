@@ -1,5 +1,5 @@
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class handles the string in a csv file
  * for example: if input xxxx,xxx the comma should not be directly write to the file.

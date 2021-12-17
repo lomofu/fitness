@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This enum defines the validation type for the form input
  */

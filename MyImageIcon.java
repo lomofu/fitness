@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.Base64;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class define the icon factory method in the whole system
  */

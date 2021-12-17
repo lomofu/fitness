@@ -5,7 +5,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class extend the jtabbedPanel with repaint the tabs. The final effect is the tabs on the top will not be paint.
  * And only the select function of the component left.

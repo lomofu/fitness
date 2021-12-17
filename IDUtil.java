@@ -2,7 +2,7 @@ import java.security.SecureRandom;
 import java.util.UUID;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  *
  * This class is used to create the id by two method
  */

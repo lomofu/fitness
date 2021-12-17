@@ -1,5 +1,5 @@
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This interface defined the observer behavior functions of the observer pattern
  * T: The type of object to be observed needs to be passed into the generic form

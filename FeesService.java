@@ -1,7 +1,7 @@
 import java.math.BigDecimal;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  *
  * This class deals with business logic related to fee list
  */

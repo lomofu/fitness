@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.stream.IntStream;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class defines a common date picker for date choose
  */

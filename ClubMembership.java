@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class will boot the whole application whith some steps
  * <p>
@@ -20,7 +20,7 @@ public class ClubMembership {
             //cover the exceptions and errors
         } catch (InterruptedException | InvocationTargetException | Error e) {
             SplashView.dispose();
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getCause(), "Error", JOptionPane.ERROR_MESSAGE);
             Logger.error(e.getMessage());
             System.exit(-1);
         }

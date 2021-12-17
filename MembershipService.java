@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class deals with business logic related to membership records
  */

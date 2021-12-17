@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class abstract the common operation and style of the table
  * you can easyly to implement a table by extends this class and customize the table a little

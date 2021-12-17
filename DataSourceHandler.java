@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is used to take over the data processing between the UI layer and the Dao layer
  * Therefore, different data types are required for different scenarios and are written in this class to reduce coupling

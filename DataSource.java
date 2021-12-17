@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * 1. This class is a resposity to store the all system data we need
  * 2. Aslo, the datasoure is the observed, when there is a data change event. It will broadcast to the subscribers.

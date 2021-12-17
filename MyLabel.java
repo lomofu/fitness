@@ -1,7 +1,7 @@
 import javax.swing.*;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class defines a common JLabel for use
  */

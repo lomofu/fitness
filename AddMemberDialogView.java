@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * The class covers functions below:
  * 1. Input and display new member information.

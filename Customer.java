@@ -1,7 +1,7 @@
 import java.util.Objects;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class stores each customer details
  */

@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is used to create a new dialog to renew the membership expire date
  */

@@ -1,7 +1,7 @@
 import java.math.BigDecimal;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class define two default membership type with fees, courses and path
  */

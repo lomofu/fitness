@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is used to edit the membership information
  */

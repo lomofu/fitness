@@ -9,7 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.function.Consumer;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class defines a text card to show some data statistics text
  */

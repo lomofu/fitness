@@ -3,7 +3,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is an extension of customer class
  */

@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class set the home panel and implement related functions
  * <p>

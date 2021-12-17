@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class set the consumption table and implement related functions
  * <p>

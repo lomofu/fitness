@@ -1,5 +1,5 @@
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class defines the common constants in the system UI
  */

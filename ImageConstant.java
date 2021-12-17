@@ -1,6 +1,6 @@
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  *
  * This method defines some image constants used in the system
  */

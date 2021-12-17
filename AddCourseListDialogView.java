@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is used to assign the different role(membership type) with virus choice
  * It is related to the class see @Course and see @Role

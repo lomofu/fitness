@@ -2,7 +2,7 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class is an extension of visitor class
  */

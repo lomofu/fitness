@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  *
  * This class set the promotion table and implement related functions
  * <p>

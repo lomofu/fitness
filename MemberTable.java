@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class set the member table and implement related functions
  * <p>

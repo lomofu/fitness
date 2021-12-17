@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 /**
- * @author lomofu
+ * @author Jiaqi Fu
  * <p>
  * This class sets the role table and implement related functions
  * <p>
