@@ -237,8 +237,11 @@ public final class CSVUtil {
                     Files.newBufferedWriter(writePath, StandardCharsets.UTF_8)) {
             // iterate the data to write each object as a row
             for(T t : data) {
-                bufferedWriter.write(t.toString() + "\n");
+                bufferedWriter.write(t.toString());
+                bufferedWriter.newLine();
             }
+            // clear the buffer pool
+            bufferedWriter.flush();
         } catch(IOException e) {
             // cover the io exception when write the file
             Logger.error(e.getMessage());

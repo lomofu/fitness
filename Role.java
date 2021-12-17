@@ -16,6 +16,10 @@ public class Role {
     private String swimmingPool;
     private String courseList;
 
+    public Role() {
+        // do nothing
+    }
+
     public Role(String roleName, String oneMonth, String threeMonth, String halfYear,
                 String fullYear, String gym, String swimmingPool, String courseList) {
         // auto set the role id
