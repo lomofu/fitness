@@ -62,6 +62,7 @@ public class AddPromotionDialogView extends JDialog implements Validator {
         this.setLocationRelativeTo(owner);
     }
 
+    // set the format of some components
     private void initFormElements() {
         promotionIdTextField.setEditable(false);
         promotionIdTextField.setFocusable(false);

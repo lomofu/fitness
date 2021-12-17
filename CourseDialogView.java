@@ -109,6 +109,7 @@ public class CourseDialogView extends JDialog implements Validator {
         this.setLocationRelativeTo(owner);
     }
 
+    // set the format of some components
     private void initFormElements() {
         courseIdTextField.setEditable(false);
         courseIdTextField.setFocusable(false);

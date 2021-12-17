@@ -110,7 +110,7 @@ public class AddVisitorDialog extends JDialog {
     }
 
     /**
-     *  this function will create a HorizontalBox filled with two labels
+     * this function will create a HorizontalBox filled with two labels
      */
     private Box getHBox(JLabel label, JLabel value) {
         Box box = Box.createHorizontalBox();

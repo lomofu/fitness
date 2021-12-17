@@ -175,6 +175,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
         this.owner = owner;
     }
 
+    // set the format of some components
     private void initFormElements() {
         memberIDTextField.setEditable(false);
         memberIDTextField.setFocusable(false);
@@ -603,7 +604,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
     }
 
     /**
-     * this function will calculate expire date based on the start date picker and update the result of the view
+     * this function will calculate expire date based on the start date and update the result of the view
      */
     private void updateExpireDate() {
         Date date = startDateTextField.getDate();

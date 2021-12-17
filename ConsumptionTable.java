@@ -24,7 +24,7 @@ import java.util.Optional;
 public class ConsumptionTable extends MyTable implements DataSourceChannel<Consumption> {
     private boolean flag = true; // flag the table is a select mode or not, true is default mode, opposite is select mode
 
-    // default table model have full functions
+    // default mode have full functions
     public ConsumptionTable(
             ClubFrameView clubFrameView, String title, String[] columns, Object[][] data) {
         super(clubFrameView, title, columns, data, UIConstant.CONSUMPTION_SEARCH_FILTER_COLUMNS);

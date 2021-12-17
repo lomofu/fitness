@@ -2,11 +2,11 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
-//todo
 
 /**
  * @author lomofu
- *
+ * <p>
+ * This class is an extension of role class
  */
 public class RoleDto {
     private String roleId;
@@ -19,7 +19,9 @@ public class RoleDto {
     private boolean swimmingPool;
     private List<Course> courseList;
 
-    public RoleDto() {}
+    public RoleDto() {
+        // do nothing
+    }
 
     public RoleDto(RoleDto roleDto) {
         this.roleId = roleDto.roleId;
@@ -33,6 +35,7 @@ public class RoleDto {
         this.courseList = roleDto.courseList;
     }
 
+    // getter and setter
     public String getRoleId() {
         return roleId;
     }
@@ -106,7 +109,7 @@ public class RoleDto {
     }
 
     public String getCourseNameList() {
-        if(courseList.isEmpty())
+        if (courseList.isEmpty())
             return "";
         return courseList.stream().map(Course::getCourseName).collect(Collectors.joining("|"));
     }
@@ -126,6 +129,9 @@ public class RoleDto {
                 getCourseNameList());
     }
 
+    /**
+     * The builder design pattern help to build an object in an elegant way
+     */
     public static class Builder {
         private RoleDto roleDto;
 

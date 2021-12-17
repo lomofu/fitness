@@ -82,16 +82,17 @@ public class RoleTable extends MyTable implements DataSourceChannel<RoleDto> {
             Component editBtn = jToolBarComponents[2];
             Component removeBtn = jToolBarComponents[4];
 
+            // if more than one role are selected, the remove button is available and edit button is unavailable
             if (jTable.getSelectedRowCount() > 0) {
                 editBtn.setEnabled(false);
                 removeBtn.setEnabled(true);
             }
-
+            // if only select one role, all button are available
             if (jTable.getSelectedRowCount() == 1) {
                 editBtn.setEnabled(true);
             }
         });
-
+        // Click the help button to view the guidance info
         this.helpBtn.addActionListener(e ->
                 JOptionPane.showMessageDialog(this.jScrollPane, UIConstant.HELP_INFO[2], "Help", JOptionPane.QUESTION_MESSAGE, MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[9][1])));
     }

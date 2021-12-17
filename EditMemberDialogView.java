@@ -110,6 +110,7 @@ public class EditMemberDialogView extends JDialog implements Validator {
         this.owner = owner;
     }
 
+    // set the format of some components
     private void initFormElements() {
         memberIDTextField.setEditable(false);
         memberIDTextField.setFocusable(false);

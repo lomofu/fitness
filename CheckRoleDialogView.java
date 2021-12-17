@@ -96,6 +96,7 @@ public class CheckRoleDialogView extends JDialog {
         this.setLocationRelativeTo(owner);
     }
 
+    // set the format of some components
     private void initFormElements() {
         roleIdTextField.setEditable(false);
         roleIdTextField.setFocusable(false);

@@ -192,7 +192,7 @@ public class CheckMemberInfoDialogView extends JDialog {
         return true;
     }
 
-
+    // set the format of some components
     private void initFormElements() {
         edit.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
         close.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
@@ -233,6 +233,9 @@ public class CheckMemberInfoDialogView extends JDialog {
 
     }
 
+    /**
+     * change some style of components in the form
+     */
     private void initComponentsSetting() {
         healthConditionTextField.setLineWrap(true);
         healthConditionTextField.setWrapStyleWord(true);

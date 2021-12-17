@@ -4,13 +4,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
-//todo
+
 /**
  * @author lomofu
- * @desc
- * @create 11/Dec/2021 06:43
+ * <p>
+ * This class is used to create a new dialog to renew the membership expire date
  */
 public class RenewMemberDialogView extends JDialog {
+    // define the default gap for each component in the layout
     private static final int X_GAP = 20;
     private static final int Y_GAP = 20;
 
@@ -53,6 +54,13 @@ public class RenewMemberDialogView extends JDialog {
         this.add(panel);
     }
 
+    /**
+     * This factory method will create a new dialog when click the renew button on the
+     * see@MemberTable
+     *
+     * @param owner parent component
+     * @param id    member id
+     */
     public static void showDig(Frame owner, String id) {
         if (checkData(id))
             return;
@@ -60,14 +68,21 @@ public class RenewMemberDialogView extends JDialog {
         renewMemberDialogView.setVisible(true);
     }
 
+    /**
+     * This method will check if the selected member can be renewed
+     *
+     * @param id member id
+     */
     private static boolean checkData(String id) {
         Optional<CustomerDto> op = MembershipService.findCustomerByIdOp(id);
+        // if the member cannot be found, show the error message and no action is taken
         if (op.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Can not find this member!", "Error", JOptionPane.ERROR_MESSAGE);
             return true;
         }
         CustomerDto customerDto = op.get();
         String roleName = customerDto.getRole().getRoleName();
+        // if the membership type info lost,show the error message and no action is taken
         if (roleName == null || "".equals(roleName)) {
             JOptionPane.showMessageDialog(null, """
                     Can not renew this account!
@@ -77,6 +92,7 @@ public class RenewMemberDialogView extends JDialog {
             return true;
         }
         String parent = customerDto.getParent();
+        // if the member is a sub-account family member, it cannot be renewed
         if (!(parent == null || "".equals(parent)) && roleName.equals(DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName())) {
             JOptionPane.showMessageDialog(null, """
                     Can not renew this account!
@@ -98,21 +114,29 @@ public class RenewMemberDialogView extends JDialog {
         this.owner = owner;
     }
 
+    /**
+     * This method will find the relevant information based on the member ID to be displayed in the corresponding component
+     *
+     * @param id member id
+     */
     private void bindData(String id) {
         this.customerDto = MembershipService.findCustomerByIdOp(id).get();
         memberIDTextField.setText(customerDto.getId());
         memberTextField.setText(customerDto.getRole().getRoleName());
         expireTimeValue.setText(DateUtil.format(customerDto.getExpireTime()));
+        // if the member is within the expiry date, the membership is renewed at the original expiry date
         if (customerDto.getState().equals(CustomerSateEnum.ACTIVE.getName())) {
             startDateTextField.setText(DateUtil.format(customerDto.getStartDate()));
             updateExpireDateWithExpire();
         } else {
+            //if the membership has expired, then the renewal starts on the day of renewal
             startDateTextField.setText(DateUtil.now());
             updateExpireDate();
         }
         updateFees();
     }
 
+    // set the format of some components
     private void initFormElements() {
         renew.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
         close.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
@@ -125,8 +149,11 @@ public class RenewMemberDialogView extends JDialog {
 
     private JPanel initPanel() {
         initComponentsSetting();
+
         JPanel panel = new JPanel(springLayout);
         initSpringLayout(panel);
+
+        // add the components to the panel
         panel.add(memberIdLabel);
         panel.add(durationDateLabel);
         panel.add(codeLabel);
@@ -141,6 +168,9 @@ public class RenewMemberDialogView extends JDialog {
         return panel;
     }
 
+    /**
+     * change some style of components in the form
+     */
     private void initComponentsSetting() {
         discountLabel.setForeground(Color.RED);
         discountLabel.setVisible(false);
@@ -194,6 +224,9 @@ public class RenewMemberDialogView extends JDialog {
         myCard.addC(verticalBox);
     }
 
+    /**
+     * this function will create a HorizontalBox filled with two labels
+     */
     private Box getHBox(JLabel label, JLabel value) {
         Box box = Box.createHorizontalBox();
         box.add(label);
@@ -203,16 +236,19 @@ public class RenewMemberDialogView extends JDialog {
     }
 
     private void initSpringLayout(JPanel panel) {
+        // use the Spring to calculate the width of the codeLabel width + codeBox width + const X_GAP (20)
         Spring childWidth =
                 Spring.sum(
                         Spring.sum(Spring.width(codeLabel), Spring.width(codeBox)),
                         Spring.constant(X_GAP));
 
+        // pack the first row
         initMemberIdRow(panel, childWidth);
 
         initChildRow(memberIdLabel, durationDateLabel, durationComboBox);
         initChildRow(durationDateLabel, codeLabel, codeBox);
 
+        // use the spring layout to put constraint
         springLayout.putConstraint(SpringLayout.WEST, myCard, 0, SpringLayout.WEST, codeLabel);
         springLayout.putConstraint(SpringLayout.NORTH, myCard, Y_GAP, SpringLayout.SOUTH, codeBox);
 
@@ -240,34 +276,52 @@ public class RenewMemberDialogView extends JDialog {
                 SpringLayout.WEST, memberIDTextField, X_GAP, SpringLayout.EAST, memberIdLabel);
     }
 
+    /**
+     * The function abstract a row with a JLabel and a component (most are the JTextFields)
+     *
+     * @param refer     the reference label
+     * @param label     the label need to put constraint
+     * @param component the component need to put constraint
+     */
     private void initChildRow(JLabel refer, JLabel label, Component component) {
-        // align with refer
+        // let the label align to refer
         springLayout.putConstraint(SpringLayout.EAST, label, 0, SpringLayout.EAST, refer);
         springLayout.putConstraint(SpringLayout.NORTH, label, Y_GAP, SpringLayout.SOUTH, refer);
 
+        // let the component align to label
         springLayout.putConstraint(SpringLayout.NORTH, component, 0, SpringLayout.NORTH, label);
         springLayout.putConstraint(SpringLayout.WEST, component, X_GAP, SpringLayout.EAST, label);
     }
 
+    /**
+     * This function manger all the callback events of the components
+     */
     private void initListener() {
+        // this callback will handle the promotion code to the calculation system if it is legal
         codeBtn.addActionListener(__ -> {
             String code = codeTextField.getText();
+            // cover the NPE or the promotion code is illegal
             if (code == null || PromotionCodeService.findPromotionCodeOp(code).isEmpty()) {
                 this.apply = false;
                 JOptionPane.showMessageDialog(
                         this, "Code Invalid", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            this.apply = true;
+            this.apply = true; // assign the flag to true that help update the fees
+            // update the fees with discount, if the promotion code is applied before
             updateFeesWithDiscount();
         });
 
+        // when choose the duration, the expired date should be updated too
         durationComboBox.addActionListener(__ -> {
+            // if the member status is active, then the renewal is renewed from the original expiry date
             if (customerDto.getState().equals(CustomerSateEnum.ACTIVE.getName())) {
                 updateExpireDateWithExpire();
             } else {
+                // if the member status is expired, then the renewal is renewed from the renewal date
                 updateExpireDate();
             }
+            // if the flag is applied, update the fees with discount or keep original fee
             if (!apply) {
                 updateFees();
                 return;
@@ -282,6 +336,7 @@ public class RenewMemberDialogView extends JDialog {
             updateFeesWithDiscount();
         });
 
+        // handle the form process of renewal
         renew.addActionListener(__ -> {
             int result = JOptionPane.showConfirmDialog(
                     this,
@@ -313,9 +368,13 @@ public class RenewMemberDialogView extends JDialog {
         close.addActionListener(__ -> this.dispose());
     }
 
+    /**
+     * this function will calculate expire date based on the renewal date and update the result of the view
+     */
     private void updateExpireDate() {
         String startDateTextFieldText = startDateTextField.getText();
         Date date = DateUtil.str2Date(startDateTextFieldText);
+        // cover NPE
         if (Objects.isNull(date)) {
             return;
         }
@@ -327,9 +386,13 @@ public class RenewMemberDialogView extends JDialog {
         expireTimeValue.setText(expireTime);
     }
 
+    /**
+     * this function will calculate expire date based on the original expired date and update the result of the view
+     */
     private void updateExpireDateWithExpire() {
         String expireTimeValueText = expireTimeValue.getText();
         Date date = DateUtil.str2Date(expireTimeValueText);
+        // cover NPE
         if (Objects.isNull(date)) {
             return;
         }
@@ -341,6 +404,9 @@ public class RenewMemberDialogView extends JDialog {
         expireTimeValue.setText(expireTime);
     }
 
+    /**
+     * this function will calculate fees based on the membership type, duration
+     */
     private void updateFees() {
         String type = memberTextField.getText();
         String duration = (String) durationComboBox.getSelectedItem();
@@ -351,6 +417,9 @@ public class RenewMemberDialogView extends JDialog {
         membershipFeesValue.setText(fees.toString());
     }
 
+    /**
+     * sames to the see@updateFees function, specially, when calculate the fees, it will render extra discount info in the view
+     */
     private void updateFeesWithDiscount() {
         String type = memberTextField.getText();
         String duration = (String) durationComboBox.getSelectedItem();
