@@ -630,7 +630,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
         String type = (String) memberComBox.getSelectedItem();
         String duration = (String) durationComboBox.getSelectedItem();
         String mid = parentIdValue.getText();
-        if (DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(type) && "".equals(mid)) {
+        if (DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(type) && !"".equals(mid)) {
             return;
         }
         BigDecimal fees = FeesService.getFees(type, duration);
@@ -646,7 +646,7 @@ public class AddMemberDialogView extends JDialog implements Validator {
     private void updateFeesWithDiscount() {
         String type = (String) memberComBox.getSelectedItem();
         String mid = parentIdValue.getText();
-        if (DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(type) && "".equals(mid)) {
+        if (DefaultDataConstant.DEFAULT_MEMBERS[1].getRoleName().equals(type) && !"".equals(mid)) {
             return;
         }
         String duration = (String) durationComboBox.getSelectedItem();
