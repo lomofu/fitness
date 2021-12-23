@@ -1,2 +1,5 @@
 out/
 .class
+.idea/
+*.iml
+.gitignore
