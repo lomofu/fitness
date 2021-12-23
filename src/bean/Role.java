@@ -7,8 +7,8 @@ import java.text.MessageFormat;
 
 /**
  * @author lomofu
- * @desc
- * @create 28/Nov/2021 23:14
+ * <p>
+ * This class stores each role details
  */
 public class Role {
     private String roleId;
@@ -21,10 +21,13 @@ public class Role {
     private String swimmingPool;
     private String courseList;
 
-    public Role() {}
+    public Role() {
+        // do nothing
+    }
 
     public Role(String roleName, String oneMonth, String threeMonth, String halfYear,
                 String fullYear, String gym, String swimmingPool, String courseList) {
+        // auto set the role id
         this.roleId = IDUtil.generateId("R");
         this.roleName = roleName;
         this.oneMonth = oneMonth;
@@ -108,6 +111,7 @@ public class Role {
         this.courseList = courseList;
     }
 
+    // call this method when deserialization(write to the file)
     @Override
     public String toString() {
         return MessageFormat.format("{0},{1},{2},{3},{4},{5},{6},{7},{8}",

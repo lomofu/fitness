@@ -1,19 +1,21 @@
 package bean;
 
-import java.text.MessageFormat;
+import utils.StringUtil;
 
-import static utils.StringUtil.escapeSpecialCharacters;
+import java.text.MessageFormat;
 
 /**
  * @author lomofu
- * @desc
- * @create 29/Nov/2021 03:51
+ * <p>
+ * This class stores each promotion details
  */
 public class Promotion {
     private String promotionId;
     private String promotionCode;
     private String promotionType;
     private String value;
+
+    //getter and setter
 
     public String getPromotionId() {
         return promotionId;
@@ -49,6 +51,6 @@ public class Promotion {
 
     @Override
     public String toString() {
-        return MessageFormat.format("{0},{1},{2},{3}", promotionId, escapeSpecialCharacters(promotionCode), promotionType, value);
+        return MessageFormat.format("{0},{1},{2},{3}", promotionId, StringUtil.escapeSpecialCharacters(promotionCode), promotionType, value);
     }
 }

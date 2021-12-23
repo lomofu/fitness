@@ -1,6 +1,7 @@
 package component;
 
 import constant.ColorConstant;
+import constant.UIConstant;
 import ui.ClubFrameView;
 
 import javax.swing.*;
@@ -16,18 +17,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static constant.UIConstant.TABLE_TOOL_LIST;
-
 /**
  * @author lomofu
- * @desc
- * @create 26/Nov/2021 00:29
+ * <p>
+ * This class abstract the common operation and style of the table
+ * you can easyly to implement a table by extends this class and customize the table a little
  */
 public abstract class MyTable {
+    // the table model related to the table
     protected DefaultTableModel tableModel = new DefaultTableModel();
+    // parent component
     protected ClubFrameView clubFrameView;
     protected JPanel title;
-    protected JButton helpBtn = new TableToolButton("", MyImageIcon.build(TABLE_TOOL_LIST[9][1]));
+    protected JButton helpBtn = new TableToolButton("", MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[9][1]));
     protected JScrollPane jScrollPane;
     protected JToolBar jToolBar;
     protected JTable jTable;
@@ -40,6 +42,7 @@ public abstract class MyTable {
     protected boolean selectMode;
     protected int selectIndex;
 
+    // default table
     public MyTable(ClubFrameView clubFrameView, String title, String[] columns, Object[][] data, int[] filterColumns) {
         this.clubFrameView = clubFrameView;
         this.columns = columns;
@@ -54,6 +57,7 @@ public abstract class MyTable {
         initListeners();
     }
 
+    // select mode
     public MyTable(
             String title,
             String[] columns,
@@ -75,6 +79,7 @@ public abstract class MyTable {
         initListeners();
     }
 
+    // getter
     public JPanel getTitle() {
         return title;
     }
@@ -91,6 +96,7 @@ public abstract class MyTable {
         return filterBar;
     }
 
+    // set the table title style
     private void initTitle(String title) {
         var header = new JLabel(title, SwingConstants.CENTER);
         header.setFont(new Font(null, Font.BOLD, 20));
@@ -103,12 +109,14 @@ public abstract class MyTable {
         this.title.add(header);
     }
 
+    // set some components of the toolbar
     private void initToolBar() {
         this.jToolBar = new JToolBar();
         this.jToolBar.setLayout(new BoxLayout(this.jToolBar, BoxLayout.X_AXIS));
         this.jToolBar.setFloatable(false);
         this.jToolBar.setPreferredSize(new Dimension(0, 40));
 
+        // default each table has the search box and help button
         searchBox = Box.createHorizontalBox();
         searchTextField = new JTextField(20);
         searchTextField.setMaximumSize(new Dimension(100, 40));
@@ -121,6 +129,7 @@ public abstract class MyTable {
         addComponentsToToolBar();
     }
 
+    // set the default filter bar
     private void initFilterBar() {
         this.filterBar = new JToolBar();
         this.filterBar.setLayout(new BoxLayout(this.filterBar, BoxLayout.Y_AXIS));
@@ -132,10 +141,13 @@ public abstract class MyTable {
         addComponentsToFilterBar();
     }
 
+    // provide a function to add more components you need in the toolbar
     protected abstract void addComponentsToToolBar();
 
+    // provide a function to add more components you need in the filter bar
     protected abstract void addComponentsToFilterBar();
 
+    // set the table
     private void initTable() {
         this.jTable =
                 new JTable(this.tableModel) {
@@ -146,11 +158,14 @@ public abstract class MyTable {
                 };
         this.jTable.setDragEnabled(false);
         this.jTable.getTableHeader().setReorderingAllowed(false);
+        // connect to the table model
         this.jTable.setRowSorter(new TableRowSorter<TableModel>(this.tableModel));
+
         bindData();
         setTableStyle();
     }
 
+    // set some style of the table
     protected void setTableStyle() {
         this.jTable.setGridColor(new Color(227, 227, 227));
         this.jTable.setShowHorizontalLines(false);
@@ -183,20 +198,26 @@ public abstract class MyTable {
                         });
     }
 
+    // bind columns and related data into the table model
     private void bindData() {
         tableModel.setDataVector(data, columns);
     }
 
+    // put the table into the scroll pane
     private void initScrollPane() {
         this.jScrollPane = new JScrollPane(jTable);
     }
 
+    /**
+     * This function manger the callback events of the components
+     */
     private void initListeners() {
         this.jTable.addMouseListener(
                 new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if(e.getButton() == MouseEvent.BUTTON3) {
+                            // callback the right click function
                             onRightClick(e);
                         }
                     }
@@ -204,6 +225,7 @@ public abstract class MyTable {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                            // callback the double click function
                             onDoubleClick(e);
                         }
                     }
@@ -212,6 +234,7 @@ public abstract class MyTable {
         searchTextField
                 .getDocument()
                 .addDocumentListener(
+                        // overriding the search box events
                         new DocumentListener() {
                             @Override
                             public void insertUpdate(DocumentEvent e) {
@@ -229,12 +252,16 @@ public abstract class MyTable {
                             }
 
                             private void update() {
+                                // get the sorter in the table model
                                 TableRowSorter<TableModel> sorter = new TableRowSorter<>(jTable.getModel());
+                                // get the search words
                                 String text = searchTextField.getText();
                                 if(text.trim().length() == 0) {
+                                    // set a new table row sorter
                                     jTable.setRowSorter(new TableRowSorter<>(jTable.getModel()));
                                     return;
                                 }
+                                // use regex filter and also cover no sense to lower or upper case
                                 sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, filterColumns));
                                 jTable.setRowSorter(sorter);
                             }
@@ -245,17 +272,26 @@ public abstract class MyTable {
 
     protected abstract void onDoubleClick(MouseEvent e);
 
+    /**
+     * This class define a customized cell render, which implement the search highlight the corresponding search result
+     * <p
+     * For ex. If we input the val in a table and a value exist in the table we will highlight the format like
+     * 'val'ue, to make it more clearly for user to use.
+     */
     private static class MyTableCellRender extends DefaultTableCellRenderer {
-        private final JTextField searchField;
-        private final int[] highlightColumns;
-        private boolean selectMode;
-        private int selectIndex;
+        private final JTextField searchField; // the reference of the search text field
+        private final int[] highlightColumns; // the highlight columns we need, not all the column need tobe search sometimes.
+        private boolean selectMode; // flag to store is a select mode
+        private int selectIndex; // if it is a select mode, we will need the checkbox index in the table.
+        // mostly is the end of the column
 
+        // some constructors
         public MyTableCellRender(JTextField searchField, int[] highlightColumns) {
             this.searchField = searchField;
             this.highlightColumns = highlightColumns;
         }
 
+        // select mode
         public MyTableCellRender(
                 JTextField searchTextField, int[] filterColumns, boolean selectMode, int selectIndex) {
             this.searchField = searchTextField;
@@ -264,6 +300,7 @@ public abstract class MyTable {
             this.selectIndex = selectIndex;
         }
 
+        // set some style of cell render
         @Override
         public Component getTableCellRendererComponent(
                 JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -297,16 +334,21 @@ public abstract class MyTable {
         }
     }
 
+    /**
+     * This class define the table tool button style also implement the mouse listener to implement the hover effect
+     */
     protected static class TableToolButton extends JButton implements MouseListener {
+        // default style setting
         public TableToolButton(String label, Color color) {
             super(label);
             this.setFont(new Font(Font.DIALOG, Font.BOLD, 13));
             this.setBorderPainted(false);
-            this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            this.setCursor(new Cursor(Cursor.HAND_CURSOR)); // to make the cursor become a hand when move to the button
             this.addMouseListener(this);
             this.setForeground(color);
         }
 
+        // default style setting
         public TableToolButton(String label, ImageIcon imageIcon) {
             super(label, imageIcon);
             this.setFont(new Font(Font.DIALOG, Font.BOLD, 13));
@@ -317,16 +359,23 @@ public abstract class MyTable {
         }
 
         @Override
-        public void mouseClicked(MouseEvent e) {}
+        public void mouseClicked(MouseEvent e) {
+            // do nothing
+        }
 
         @Override
-        public void mousePressed(MouseEvent e) {}
+        public void mousePressed(MouseEvent e) {
+            // do nothing
+        }
 
         @Override
-        public void mouseReleased(MouseEvent e) {}
+        public void mouseReleased(MouseEvent e) {
+            // do nothing
+        }
 
         @Override
         public void mouseEntered(MouseEvent e) {
+            // set a border when hover the button
             JButton btn = (JButton) e.getComponent();
             btn.setBorderPainted(true);
             btn.setRolloverEnabled(true);
@@ -334,11 +383,15 @@ public abstract class MyTable {
 
         @Override
         public void mouseExited(MouseEvent e) {
+            // clear the border when the cursor lost the button focus
             JButton btn = (JButton) e.getComponent();
             btn.setBorderPainted(false);
         }
     }
 
+    /**
+     * this class define the pop menu in the table with use the right click to trigger the menul
+     */
     protected abstract static class TablePopMenu extends JPopupMenu {
         public TablePopMenu() {
             create();
@@ -347,39 +400,50 @@ public abstract class MyTable {
         abstract void create();
     }
 
+    /**
+     * this class implement the highlight the corresponding result in search function
+     */
     private static class LabelHighlighted extends JLabel {
-        private final List<Rectangle2D> rectangles = new ArrayList<>();
-        private final Color colorHighlight = Color.YELLOW;
+        private final List<Rectangle2D> rectangles = new ArrayList<>(); // store the correct true rectangle
+        private final Color colorHighlight = Color.YELLOW; // define highlight color
 
         public void reset() {
             rectangles.clear();
             repaint();
         }
 
+        // highlight what is sub-string in a search result
         public void highlightText(String textToHighlight) {
             if(textToHighlight == null) {
                 return;
             }
             reset();
 
+            // lowercase compare
             final String textToMatch = textToHighlight.toLowerCase().trim();
             if(textToMatch.length() == 0) {
                 return;
             }
             textToHighlight = textToHighlight.trim();
 
+            // make the lab text also lower case
             final String labelText = getText().toLowerCase();
+            // contains the result or not
             if(labelText.contains(textToMatch)) {
+                // get the font metrics
                 FontMetrics fm = getFontMetrics(getFont());
                 float w = - 1;
+                // calculate the height for the height box
                 final float h = fm.getHeight() - 1;
                 int i = 0;
+                // loop to search all the result
                 while(true) {
                     i = labelText.indexOf(textToMatch, i);
                     if(i == - 1) {
                         break;
                     }
                     if(w == - 1) {
+                        // get the matching text
                         String matchingText = getText().substring(i, i + textToHighlight.length());
                         w = fm.stringWidth(matchingText);
                     }
@@ -392,6 +456,7 @@ public abstract class MyTable {
             }
         }
 
+        // override the paint component to paint the rectangle
         @Override
         protected void paintComponent(Graphics g) {
             g.setColor(getBackground());

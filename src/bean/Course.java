@@ -1,21 +1,23 @@
 package bean;
 
 import utils.IDUtil;
-
-import static utils.StringUtil.escapeSpecialCharacters;
+import utils.StringUtil;
 
 /**
  * @author lomofu
- * @desc
- * @create 28/Nov/2021 23:51
+ * <p>
+ * This class stores each course details with two fields
  */
 public class Course {
     private String courseId;
     private String courseName;
 
-    public Course() {}
+    public Course() {
+        // do nothing
+    }
 
     public Course(String courseName) {
+        // auto set the course id
         this.courseId = IDUtil.generateId("C");
         this.courseName = courseName;
     }
@@ -36,9 +38,11 @@ public class Course {
         this.courseName = courseName;
     }
 
+    // call this method when deserialization(write to the file)
     @Override
     public String toString() {
-        return courseId + "," + escapeSpecialCharacters(courseName);
+        return courseId + "," +
+                StringUtil.escapeSpecialCharacters(courseName); // cover the course name has "," situation will append '"' on prefix and suffix
     }
 
 }

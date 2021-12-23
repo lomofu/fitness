@@ -159,7 +159,7 @@ public class HomeView extends MyPanel implements DataSourceChannel<Statistics> {
         visitor.setBorderColor(Color.WHITE);
 
         MyLabel label = new MyLabel("Functions", SwingConstants.LEFT);
-        MyLabel power = new MyLabel("Powered By Jiaqi Fu", SwingConstants.CENTER);
+        MyLabel power = new MyLabel("Powered By lomofu", SwingConstants.CENTER);
         power.setEnabled(false);
         label.setMargin(0, 30, 0, 0);
         label.setFont(new Font(label.getFont().getFontName(), Font.BOLD, 24));

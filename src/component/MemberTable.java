@@ -2,10 +2,7 @@ package component;
 
 import bean.DataSourceChannelInfo;
 import bean.Role;
-import constant.ColorConstant;
-import constant.CustomerSateEnum;
-import constant.DataManipulateEnum;
-import constant.DefaultDataConstant;
+import constant.*;
 import core.MembershipService;
 import data.DataSource;
 import data.DataSourceChannel;
@@ -28,25 +25,30 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static constant.UIConstant.*;
-
 /**
  * @author lomofu
- * @desc
- * @create 26/Nov/2021 01:05
+ * <p>
+ * This class set the member table and implement related functions
+ * <p>
+ * extends@MyTable: extends abstract table function
+ * implements@DataSourceChannel: let this object be observer to observe the data source change
+ * and call back the override onchange functions(mainly update the UI).
+ * Meanwhile, it will subscrib the data source when table init
  */
 public class MemberTable extends MyTable implements DataSourceChannel<CustomerDto>, ActionListener {
     private AddMemberDialogView addMemberDialogView;
     private AddMainMemberDialogView parent;
 
+    // default mode have full functions
     public MemberTable(ClubFrameView clubFrameView, String title, String[] columns, Object[][] data) {
-        super(clubFrameView, title, columns, data, MEMBER_SEARCH_FILTER_COLUMNS);
+        super(clubFrameView, title, columns, data, UIConstant.MEMBER_SEARCH_FILTER_COLUMNS);
         this.subscribe(CustomerDto.class);
         initTable();
         initTimer();
         initMyEvents();
     }
 
+    // select mode
     public MemberTable(
             AddMemberDialogView addMemberDialogView,
             AddMainMemberDialogView parent,
@@ -70,17 +72,24 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         TableColumnModel columnModel = this.jTable.getColumnModel();
         DateRender dateRender = new DateRender();
         StateRender stateRender = new StateRender();
+        // use customize renders
         columnModel.getColumn(3).setCellRenderer(dateRender);
         columnModel.getColumn(9).setCellRenderer(dateRender);
         columnModel.getColumn(10).setCellRenderer(dateRender);
         columnModel.getColumn(12).setCellRenderer(stateRender);
     }
 
+    /**
+     * This method initialize a timer to do the work each one hour
+     */
     private void initTimer() {
         Timer timer = new Timer((int) TimeUnit.HOURS.toMillis(1), this);
         timer.start();
     }
 
+    /**
+     * This method sets edit events, remove events, consumption events and renew events
+     */
     private void initMyEvents() {
         this.jTable.getSelectionModel().addListSelectionListener(e -> {
             Component[] jToolBarComponents = jToolBar.getComponents();
@@ -89,36 +98,43 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
             Component conBtn = jToolBarComponents[6];
             Component renewBtn = jToolBarComponents[10];
 
-            if(jTable.getSelectedRowCount() > 0) {
+            // if more than one member are selected, the remove button is available and others are unavailable
+            if (jTable.getSelectedRowCount() > 0) {
                 editBtn.setEnabled(false);
                 conBtn.setEnabled(false);
                 removeBtn.setEnabled(true);
                 renewBtn.setEnabled(false);
             }
 
-            if(jTable.getSelectedRowCount() == 1) {
+            // if only select one member, all button are available
+            if (jTable.getSelectedRowCount() == 1) {
                 editBtn.setEnabled(true);
                 conBtn.setEnabled(true);
                 renewBtn.setEnabled(true);
             }
         });
-
+        // Click the help button to view the guidance info
         this.helpBtn.addActionListener(e ->
-                JOptionPane.showMessageDialog(this.jScrollPane, HELP_INFO[0], "Help", JOptionPane.QUESTION_MESSAGE, MyImageIcon.build(TABLE_TOOL_LIST[9][1])));
+                JOptionPane.showMessageDialog(this.jScrollPane, UIConstant.HELP_INFO[0], "Help",
+                        JOptionPane.QUESTION_MESSAGE, MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[9][1])));
     }
 
+    /**
+     * This method define two mode: edit mode or select mode
+     */
     @Override
     protected void addComponentsToToolBar() {
-        if(selectMode) {
+        if (selectMode) {
             initSelectMode();
             return;
         }
         initCanEditToolBar();
     }
 
+    // set the select mode
     private void initSelectMode() {
         JButton confirmCourseBtn =
-                new TableToolButton("Confirm", MyImageIcon.build(TABLE_TOOL_LIST[0][1]));
+                new TableToolButton("Confirm", MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[0][1]));
         confirmCourseBtn.addActionListener(__ -> {
             DefaultTableModel tableModel = (DefaultTableModel) this.jTable.getModel();
             List<String> collect = tableModel.getDataVector()
@@ -128,7 +144,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
                     .map(v -> (String) v.get(0))
                     .collect(Collectors.toList());
 
-            if(collect.isEmpty()) {
+            if (collect.isEmpty()) {
                 JOptionPane.showMessageDialog(
                         this.parent,
                         "You must choose at least one main member!",
@@ -137,7 +153,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
                 return;
             }
 
-            if(collect.size() > 1) {
+            if (collect.size() > 1) {
                 JOptionPane.showMessageDialog(
                         this.parent,
                         "You must choose only one main member!",
@@ -157,28 +173,29 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         this.jToolBar.add(this.searchBox);
     }
 
+    // init some buttons of the toolbar
     private void initCanEditToolBar() {
-        JButton addMemberBtn = new TableToolButton(TABLE_TOOL_LIST[0][0], MyImageIcon.build(TABLE_TOOL_LIST[0][1]));
+        JButton addMemberBtn = new TableToolButton(UIConstant.TABLE_TOOL_LIST[0][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[0][1]));
         addMemberBtn.addActionListener(e -> AddMemberDialogView.showDig(clubFrameView));
 
-        JButton editMemberBtn = new TableToolButton(TABLE_TOOL_LIST[1][0], MyImageIcon.build(TABLE_TOOL_LIST[1][1]));
+        JButton editMemberBtn = new TableToolButton(UIConstant.TABLE_TOOL_LIST[1][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[1][1]));
         editMemberBtn.setEnabled(false);
         editMemberBtn.addActionListener(
                 e -> EditMemberDialogView.showDig(clubFrameView, (String) jTable.getModel().getValueAt(jTable.convertRowIndexToModel(jTable.getSelectedRow()), 0)));
 
-        JButton deleteMemberBtn = new TableToolButton(TABLE_TOOL_LIST[2][0], MyImageIcon.build(TABLE_TOOL_LIST[2][1]));
+        JButton deleteMemberBtn = new TableToolButton(UIConstant.TABLE_TOOL_LIST[2][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[2][1]));
         deleteMemberBtn.setEnabled(false);
         deleteMemberBtn.addActionListener(__ -> removeMember());
 
-        JButton consumptionBtn = new TableToolButton(TABLE_TOOL_LIST[7][0], MyImageIcon.build(TABLE_TOOL_LIST[7][1]));
+        JButton consumptionBtn = new TableToolButton(UIConstant.TABLE_TOOL_LIST[7][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[7][1]));
         consumptionBtn.setEnabled(false);
         consumptionBtn.addActionListener(__ -> CheckConsumptionDialogView.showDig(clubFrameView, (String) jTable.getModel().getValueAt(jTable.convertRowIndexToModel(jTable.getSelectedRow()), 0)));
 
-        JButton renewBtn = new TableToolButton(TABLE_TOOL_LIST[8][0], MyImageIcon.build(TABLE_TOOL_LIST[8][1]));
+        JButton renewBtn = new TableToolButton(UIConstant.TABLE_TOOL_LIST[8][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[8][1]));
         renewBtn.setEnabled(false);
         renewBtn.addActionListener(__ -> RenewMemberDialogView.showDig(clubFrameView, (String) jTable.getModel().getValueAt(jTable.convertRowIndexToModel(jTable.getSelectedRow()), 0)));
 
-        JButton refreshBtn = new TableToolButton(TABLE_TOOL_LIST[6][0], MyImageIcon.build(TABLE_TOOL_LIST[6][1]));
+        JButton refreshBtn = new TableToolButton(UIConstant.TABLE_TOOL_LIST[6][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[6][1]));
         refreshBtn.addActionListener(__ -> {
             Rectangle rect = jTable.getCellRect(0, 0, true);
             jTable.scrollRectToVisible(rect);
@@ -189,18 +206,18 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
             fetchData();
         });
 
-        JButton filterBtn = new TableToolButton("", MyImageIcon.build(TABLE_TOOL_LIST[3][1]));
-        filterBtn.setToolTipText(TABLE_TOOL_LIST[3][0]);
+        JButton filterBtn = new TableToolButton("", MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[3][1]));
+        filterBtn.setToolTipText(UIConstant.TABLE_TOOL_LIST[3][0]);
         filterBtn.addActionListener(__ -> {
-            if(this.filterBar.isVisible()) {
-                filterBtn.setIcon(MyImageIcon.build(TABLE_TOOL_LIST[3][1]));
-                filterBtn.setToolTipText(TABLE_TOOL_LIST[3][0]);
+            if (this.filterBar.isVisible()) {
+                filterBtn.setIcon(MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[3][1]));
+                filterBtn.setToolTipText(UIConstant.TABLE_TOOL_LIST[3][0]);
                 this.filterBar.setVisible(false);
                 return;
             }
 
-            filterBtn.setIcon(MyImageIcon.build(TABLE_TOOL_LIST[4][1]));
-            filterBtn.setToolTipText(TABLE_TOOL_LIST[4][0]);
+            filterBtn.setIcon(MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[4][1]));
+            filterBtn.setToolTipText(UIConstant.TABLE_TOOL_LIST[4][0]);
             this.filterBar.setVisible(true);
         });
 
@@ -221,6 +238,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         this.jToolBar.add(this.searchBox);
     }
 
+    // check the remove action
     private void removeMember() {
         int result = JOptionPane.showConfirmDialog(
                 this.parent,
@@ -235,7 +253,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
                 JOptionPane.YES_NO_CANCEL_OPTION
         );
 
-        if(result == JOptionPane.YES_OPTION) {
+        if (result == JOptionPane.YES_OPTION) {
             String[] array = Arrays.stream(this.jTable.getSelectedRows())
                     .map(e -> jTable.convertRowIndexToModel(e))
                     .mapToObj(e -> (String) jTable.getModel().getValueAt(e, 0))
@@ -244,6 +262,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         }
     }
 
+    // define the components with handle actions in the filter
     @Override
     protected void addComponentsToFilterBar() {
         Dimension comboBoxDim = new Dimension(100, 40);
@@ -253,9 +272,9 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
                                 Arrays.stream(Arrays.stream(DefaultDataConstant.DEFAULT_MEMBERS).map(Role::getRoleName).toArray()))
                         .toArray(String[]::new));
         JComboBox<String> genderComboBox =
-                new JComboBox<>(Stream.concat(Stream.of(""), Arrays.stream(MEMBER_GENDER_LIST)).toArray(String[]::new));
+                new JComboBox<>(Stream.concat(Stream.of(""), Arrays.stream(UIConstant.MEMBER_GENDER_LIST)).toArray(String[]::new));
 
-        JComboBox<String> stateComboBox = new JComboBox<>(new String[] {"", CustomerSateEnum.ACTIVE.getName(), CustomerSateEnum.EXPIRED.getName()});
+        JComboBox<String> stateComboBox = new JComboBox<>(new String[]{"", CustomerSateEnum.ACTIVE.getName(), CustomerSateEnum.EXPIRED.getName()});
 
 
         MyDatePicker dateOfBirthStart = new MyDatePicker(1940, LocalDate.now().getYear());
@@ -268,8 +287,8 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         MyDatePicker endTime = new MyDatePicker(1940, LocalDate.now().getYear());
         endTime.setMaximumSize(new Dimension(300, 20));
 
-        JButton searchBtn = new TableToolButton(TABLE_TOOL_LIST[5][0], MyImageIcon.build(TABLE_TOOL_LIST[5][1]));
-        searchBtn.setToolTipText(TABLE_TOOL_LIST[5][0]);
+        JButton searchBtn = new TableToolButton(UIConstant.TABLE_TOOL_LIST[5][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[5][1]));
+        searchBtn.setToolTipText(UIConstant.TABLE_TOOL_LIST[5][0]);
         searchBtn.addActionListener(e -> filterSearchBtnEvent(
                 memberTypeComboBox,
                 genderComboBox,
@@ -303,6 +322,17 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         this.filterBar.add(thirdRowBox);
     }
 
+    /**
+     * This method handle filter actions
+     *
+     * @param memberTypeComboBox membership type
+     * @param genderComboBox     gender
+     * @param stateComboBox      membership state
+     * @param dateOfBirthStart   birthday filter start date
+     * @param dateOfBirthEnd     birthday filter end date
+     * @param startTime          validity start date
+     * @param endTime            validity end date
+     */
     private void filterSearchBtnEvent(JComboBox<String> memberTypeComboBox, JComboBox<String> genderComboBox,
                                       JComboBox<String> stateComboBox,
                                       MyDatePicker dateOfBirthStart,
@@ -316,8 +346,8 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
 
         String dateBirthStart = dateOfBirthStart.getDateText();
         String dateBirthEnd = dateOfBirthEnd.getDateText();
-        if(! "".equals(dateBirthStart)
-                && ! "".equals(dateBirthEnd)
+        if (!"".equals(dateBirthStart)
+                && !"".equals(dateBirthEnd)
                 && DateUtil.isAfter(dateBirthStart, dateBirthEnd)) {
             JOptionPane.showMessageDialog(
                     this.clubFrameView,
@@ -329,8 +359,8 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
 
         String startTimeDateText = startTime.getDateText();
         String endTimeDateText = endTime.getDateText();
-        if(! "".equals(startTimeDateText)
-                && ! "".equals(endTimeDateText)
+        if (!"".equals(startTimeDateText)
+                && !"".equals(endTimeDateText)
                 && DateUtil.isAfter(startTimeDateText, endTimeDateText)) {
             JOptionPane.showMessageDialog(
                     this.clubFrameView,
@@ -340,36 +370,36 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
             return;
         }
 
-        if(! "".equals(genderItem)) {
+        if (!"".equals(genderItem)) {
             filters.add(RowFilter.regexFilter("^(?i)" + genderItem + "$", 4));
         }
-        if(! "".equals(memberTypeItem)) {
+        if (!"".equals(memberTypeItem)) {
             filters.add(RowFilter.regexFilter("^(?i)" + memberTypeItem + "$", 7));
         }
 
-        if(! "".equals(stateItem)) {
+        if (!"".equals(stateItem)) {
             filters.add(RowFilter.regexFilter("^(?i)" + stateItem + "$", 12));
         }
 
-        if(! "".equals(dateOfBirthStart.getDateText())) {
+        if (!"".equals(dateOfBirthStart.getDateText())) {
             filters.add(
-                    RowFilter.dateFilter(RowFilter.ComparisonType.AFTER, dateOfBirthStart.getDate(- 1), 3));
+                    RowFilter.dateFilter(RowFilter.ComparisonType.AFTER, dateOfBirthStart.getDate(-1), 3));
         }
 
-        if(! "".equals(dateOfBirthEnd.getDateText())) {
+        if (!"".equals(dateOfBirthEnd.getDateText())) {
             filters.add(
                     RowFilter.dateFilter(RowFilter.ComparisonType.BEFORE, dateOfBirthEnd.getDate(1), 3));
         }
 
-        if(! "".equals(startTimeDateText)) {
-            filters.add(RowFilter.dateFilter(RowFilter.ComparisonType.AFTER, startTime.getDate(- 1), 9));
+        if (!"".equals(startTimeDateText)) {
+            filters.add(RowFilter.dateFilter(RowFilter.ComparisonType.AFTER, startTime.getDate(-1), 9));
         }
 
-        if(! "".equals(endTimeDateText)) {
+        if (!"".equals(endTimeDateText)) {
             filters.add(RowFilter.dateFilter(RowFilter.ComparisonType.BEFORE, endTime.getDate(1), 9));
         }
 
-        if(filters.isEmpty()) {
+        if (filters.isEmpty()) {
             JOptionPane.showMessageDialog(
                     this.clubFrameView,
                     "You must add at least one condition to the filter!",
@@ -410,6 +440,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         return box;
     }
 
+    // init the birthday filter
     private Box initFilterSecondRow(MyDatePicker startTime, MyDatePicker endTime) {
         Box box = Box.createHorizontalBox();
         JLabel label = new JLabel("To");
@@ -424,6 +455,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         return box;
     }
 
+    // init the validity date filter
     private Box initFilterThirdRow(
             MyDatePicker startTime, MyDatePicker endTime, JButton searchBtn, JButton removeFilterBtn) {
         Box box = Box.createHorizontalBox();
@@ -448,18 +480,18 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         JTable table = (JTable) e.getSource();
         int[] selectedRows = table.getSelectedRows();
 
-        if(selectedRows.length == 0) {
+        if (selectedRows.length == 0) {
             return;
         }
 
         Point point = e.getPoint();
         int row = table.rowAtPoint(point);
 
-        if(Arrays.stream(selectedRows).filter(v -> v == row).findAny().isEmpty()) {
+        if (Arrays.stream(selectedRows).filter(v -> v == row).findAny().isEmpty()) {
             return;
         }
 
-        if(selectedRows.length == 1) {
+        if (selectedRows.length == 1) {
             table.setRowSelectionInterval(row, row);
             TablePopMenu popMenu = getSingleTablePopMenu();
             popMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -471,6 +503,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         popMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
+    // create a select menu with some options
     private TablePopMenu getSingleTablePopMenu() {
         return new TablePopMenu() {
             @Override
@@ -502,6 +535,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         };
     }
 
+    // create a select menu with remove option
     private TablePopMenu getMultiTablePopMenu() {
         return new TablePopMenu() {
             @Override
@@ -513,14 +547,18 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         };
     }
 
+    // if double click one member row, it will show this member info
     @Override
     protected void onDoubleClick(MouseEvent e) {
         JTable table = (JTable) e.getSource();
-        if(table.getSelectedRow() != - 1) {
+        if (table.getSelectedRow() != -1) {
             CheckMemberInfoDialogView.showDig(clubFrameView, (String) jTable.getModel().getValueAt(jTable.convertRowIndexToModel(jTable.getSelectedRow()), 0));
         }
     }
 
+    /**
+     * This method is a call back for the insert action
+     */
     private void insert() {
         SwingUtilities.invokeLater(() -> {
             fetchData();
@@ -529,6 +567,9 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         });
     }
 
+    /**
+     * This method refresh the data from data source
+     */
     private void fetchData() {
         Component[] jToolBarComponents = jToolBar.getComponents();
         Component editBtn = jToolBarComponents[2];
@@ -541,21 +582,33 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         renewBtn.setEnabled(false);
 
         DefaultTableModel model = (DefaultTableModel) this.jTable.getModel();
-        model.setDataVector(MembershipService.findMembersForTableRender(), MEMBER_COLUMNS);
+        model.setDataVector(MembershipService.findMembersForTableRender(), UIConstant.MEMBER_COLUMNS);
         model.fireTableDataChanged();
         this.jTable.setModel(model);
         super.setTableStyle();
         initTable();
     }
 
+    /**
+     * This method overrides the observer hook function if the corresponding data in
+     * data source has mutable.
+     *
+     * @param e    customerDto object
+     * @param flag operation type
+     */
     @Override
     public void onDataChange(CustomerDto e, DataManipulateEnum flag) {
-        switch(flag) {
+        switch (flag) {
             case INSERT -> insert();
             case UPDATE, DELETE -> SwingUtilities.invokeLater(this::fetchData);
         }
     }
 
+    /**
+     * This method subscribe data source when the object is init
+     *
+     * @param customerClass customer.class
+     */
     @Override
     public void subscribe(Class<CustomerDto> customerClass) {
         DataSource.subscribe(new DataSourceChannelInfo<>(this, customerClass));
@@ -567,13 +620,17 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         Logger.info("Membership Table updated");
     }
 
+    /**
+     * This class define how to render the date column
+     */
     private static class DateRender extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(
                 JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if(row % 2 == 0)
+            // set alternate colours
+            if (row % 2 == 0)
                 setBackground(new Color(213, 213, 213));
-            else if(row % 2 == 1)
+            else if (row % 2 == 1)
                 setBackground(Color.white);
             Component c =
                     super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -589,6 +646,9 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
         }
     }
 
+    /**
+     * This class define the membership state render
+     */
     private static class StateRender extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(
@@ -596,7 +656,7 @@ public class MemberTable extends MyTable implements DataSourceChannel<CustomerDt
             Component c =
                     super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             JLabel original = (JLabel) c;
-            if(original.getText().equals(CustomerSateEnum.EXPIRED.getName())) {
+            if (original.getText().equals(CustomerSateEnum.EXPIRED.getName())) {
                 original.setBackground(ColorConstant.PANTONE170C);
             } else {
                 original.setBackground(ColorConstant.PANTONE359C);

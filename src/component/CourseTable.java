@@ -3,6 +3,7 @@ package component;
 import bean.Course;
 import bean.DataSourceChannelInfo;
 import constant.DataManipulateEnum;
+import constant.UIConstant;
 import core.CourseService;
 import data.DataSource;
 import data.DataSourceChannel;
@@ -21,24 +22,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static constant.UIConstant.*;
-
 /**
  * @author lomofu
- * @desc
- * @create 29/Nov/2021 04:12
+ * <p>
+ * This class sets the course table and implement related functions
+ * <p>
+ * extends@MyTable: extends abstract table function
+ * implements@DataSourceChannel: let this object be observer to observe the data source change
+ * and call back the override onchange functions(mainly update the UI).
+ * Meanwhile, it will subscrib the data source when table init
  */
 public class CourseTable extends MyTable implements DataSourceChannel<Course> {
     private RoleDialogView roleDialogView;
     private AddCourseListDialogView parent;
     private List<Course> courseList;
 
+    // default table model have full functions
     public CourseTable(ClubFrameView clubFrameView, String title, String[] columns, Object[][] data, int[] filterColumns) {
         super(clubFrameView, title, columns, data, filterColumns);
         this.subscribe(Course.class);
         initMyEvents();
     }
 
+    // this select model table only have a checkBox and cannot be edited
     public CourseTable(
             RoleDialogView roleDialogView,
             AddCourseListDialogView parent,
@@ -59,35 +65,47 @@ public class CourseTable extends MyTable implements DataSourceChannel<Course> {
         this.parent = parent;
     }
 
+    /**
+     * This method sets edit events and help events
+     */
     private void initMyEvents() {
         this.jTable.getSelectionModel().addListSelectionListener(e -> {
             Component[] jToolBarComponents = jToolBar.getComponents();
             Component editBtn = jToolBarComponents[2];
 
-            if(jTable.getSelectedRowCount() > 0) {
+            // If more than one courses are selected, the Edit button is unavailable
+            if (jTable.getSelectedRowCount() > 0) {
                 editBtn.setEnabled(false);
             }
 
-            if(jTable.getSelectedRowCount() == 1) {
+            // If one course is selected, the Edit button is available
+            if (jTable.getSelectedRowCount() == 1) {
                 editBtn.setEnabled(true);
             }
         });
+        // Click the help button to view the guidance info
         this.helpBtn.addActionListener(e ->
-                JOptionPane.showMessageDialog(this.jScrollPane, HELP_INFO[3], "Help", JOptionPane.QUESTION_MESSAGE, MyImageIcon.build(TABLE_TOOL_LIST[9][1])));
+                JOptionPane.showMessageDialog(this.jScrollPane, UIConstant.HELP_INFO[3], "Help", JOptionPane.QUESTION_MESSAGE, MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[9][1])));
     }
 
+    /**
+     * This method define two mode: edit course mode or select course mode
+     */
     @Override
     protected void addComponentsToToolBar() {
-        if(selectMode) {
+        if (selectMode) {
             initSelectMode();
             return;
         }
         initCanEditToolBar();
     }
 
+    /**
+     * define the select mode of the course table
+     */
     private void initSelectMode() {
         JButton confirmCourseBtn =
-                new TableToolButton("Confirm", MyImageIcon.build(TABLE_TOOL_LIST[0][1]));
+                new TableToolButton("Confirm", MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[0][1]));
         confirmCourseBtn.addActionListener(e -> {
             DefaultTableModel tableModel = (DefaultTableModel) this.jTable.getModel();
             courseList = tableModel.getDataVector().stream()
@@ -108,19 +126,22 @@ public class CourseTable extends MyTable implements DataSourceChannel<Course> {
         this.jToolBar.add(this.searchBox);
     }
 
+    /**
+     * if the mode is edit mode, init the edit tool bar
+     */
     private void initCanEditToolBar() {
         JButton addCourseBtn =
-                new TableToolButton(TABLE_TOOL_LIST[0][0], MyImageIcon.build(TABLE_TOOL_LIST[0][1]));
+                new TableToolButton(UIConstant.TABLE_TOOL_LIST[0][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[0][1]));
         addCourseBtn.addActionListener(e -> CourseDialogView.showDig(clubFrameView));
 
         JButton editCourseBtn =
-                new TableToolButton(TABLE_TOOL_LIST[1][0], MyImageIcon.build(TABLE_TOOL_LIST[1][1]));
+                new TableToolButton(UIConstant.TABLE_TOOL_LIST[1][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[1][1]));
         editCourseBtn.setEnabled(false);
         editCourseBtn.addActionListener(e ->
                 CourseDialogView.showDig(clubFrameView, (String) jTable.getModel().getValueAt(jTable.convertRowIndexToModel(jTable.getSelectedRow()), 0)));
 
         JButton refreshBtn =
-                new TableToolButton(TABLE_TOOL_LIST[6][0], MyImageIcon.build(TABLE_TOOL_LIST[6][1]));
+                new TableToolButton(UIConstant.TABLE_TOOL_LIST[6][0], MyImageIcon.build(UIConstant.TABLE_TOOL_LIST[6][1]));
         refreshBtn.addActionListener(__ -> {
             editCourseBtn.setEnabled(false);
             Rectangle rect = jTable.getCellRect(0, 0, true);
@@ -138,31 +159,42 @@ public class CourseTable extends MyTable implements DataSourceChannel<Course> {
     }
 
     @Override
-    protected void addComponentsToFilterBar() {}
+    protected void addComponentsToFilterBar() {
+        // do nothing
+    }
 
+    /**
+     * This method is used to monitor right mouse click events
+     *
+     * @param e mouse event
+     */
     @Override
     protected void onRightClick(MouseEvent e) {
         JTable table = (JTable) e.getSource();
         int[] selectedRows = table.getSelectedRows();
 
-        if(selectedRows.length == 0) {
+        // If the mouse is right-clicked without a row selected, no action is taken
+        if (selectedRows.length == 0) {
             return;
         }
 
         Point point = e.getPoint();
         int row = table.rowAtPoint(point);
 
-        if(Arrays.stream(selectedRows).filter(v -> v == row).findAny().isEmpty()) {
+        // If no right mouse click is made on the selected row, no action is taken.
+        if (Arrays.stream(selectedRows).filter(v -> v == row).findAny().isEmpty()) {
             return;
         }
 
-        if(selectedRows.length == 1) {
+        // If the right mouse click is made with individual rows selected, the Edit menu option is displayed
+        if (selectedRows.length == 1) {
             table.setRowSelectionInterval(row, row);
             TablePopMenu popMenu = getSingleTablePopMenu();
             popMenu.show(e.getComponent(), e.getX(), e.getY());
         }
     }
 
+    // create a select menu with edit option
     private TablePopMenu getSingleTablePopMenu() {
         return new TablePopMenu() {
             @Override
@@ -175,11 +207,15 @@ public class CourseTable extends MyTable implements DataSourceChannel<Course> {
         };
     }
 
+    // create a course dialog when double-click the mouse on the selected row
     @Override
     protected void onDoubleClick(MouseEvent e) {
         CourseDialogView.showDig(clubFrameView, (String) jTable.getModel().getValueAt(jTable.convertRowIndexToModel(jTable.getSelectedRow()), 0));
     }
 
+    /**
+     * This method is a call back for the insert action
+     */
     private void insert() {
         SwingUtilities.invokeLater(() -> {
             fetchData();
@@ -188,22 +224,38 @@ public class CourseTable extends MyTable implements DataSourceChannel<Course> {
         });
     }
 
+    /**
+     * This method refresh the data from data source
+     */
     private void fetchData() {
         DefaultTableModel model = (DefaultTableModel) this.jTable.getModel();
-        model.setDataVector(CourseService.findCoursesForTableRender(), COURSE_COLUMNS);
+        model.setDataVector(CourseService.findCoursesForTableRender(), UIConstant.COURSE_COLUMNS);
         model.fireTableDataChanged();
         this.jTable.setModel(model);
         super.setTableStyle();
     }
 
+    /**
+     * This method override the observer hook function if the corresponding data in
+     * data source has mutable.
+     *
+     * @param course parameter from data source of
+     *               which course object has been changed(only have value if is a update operation)
+     * @param flag   operation type
+     */
     @Override
     public void onDataChange(Course course, DataManipulateEnum flag) {
-        switch(flag) {
+        switch (flag) {
             case INSERT -> insert();
             case UPDATE, DELETE -> SwingUtilities.invokeLater(this::fetchData);
         }
     }
 
+    /**
+     * This method subscribe data source when the object is init
+     *
+     * @param courseClass Course.class
+     */
     @Override
     public void subscribe(Class<Course> courseClass) {
         DataSource.subscribe(new DataSourceChannelInfo<>(this, courseClass));

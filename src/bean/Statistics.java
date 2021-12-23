@@ -2,8 +2,8 @@ package bean;
 
 /**
  * @author lomofu
- * @desc
- * @create 12/Dec/2021 03:51
+ * <p>
+ * This class stores each data statistics
  */
 public class Statistics {
     public String fees = "0";
@@ -13,6 +13,7 @@ public class Statistics {
     private int courses = 0;
     private int promotionCode = 0;
 
+    // getter and setter
     public String getFees() {
         return fees;
     }

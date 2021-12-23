@@ -12,8 +12,8 @@ import java.util.function.Consumer;
 
 /**
  * @author lomofu
- * @desc
- * @create 22/Nov/2021 20:00
+ * <p>
+ * This class defines a text card to show some data statistics text
  */
 public class MyTextCard extends JPanel implements MouseListener {
     private final int elevation = 5;
@@ -36,6 +36,7 @@ public class MyTextCard extends JPanel implements MouseListener {
         this.addMouseListener(this);
     }
 
+    // get the data statistics
     public JLabel getCount() {
         return count;
     }
@@ -74,7 +75,9 @@ public class MyTextCard extends JPanel implements MouseListener {
         this.count.setText(Integer.toString(count));
     }
 
-    public void setValue(String count) {this.count.setText(count);}
+    public void setValue(String count) {
+        this.count.setText(count);
+    }
 
     public MyPanel getContentPanel() {
         return contentPanel;
@@ -99,6 +102,7 @@ public class MyTextCard extends JPanel implements MouseListener {
         this.contentPanel.add(count);
     }
 
+    // set some form of the count number label
     private void initCountNumber() {
         this.count.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
         Border titleBorder = this.count.getBorder();
@@ -110,23 +114,31 @@ public class MyTextCard extends JPanel implements MouseListener {
     protected void paintComponent(Graphics g) {
         int shade = 0;
         int topOpacity = 70;
-        for(int i = 0; i < elevation; i++) {
+        // set shadow elevation
+        for (int i = 0; i < elevation; i++) {
             g.setColor(new Color(shade, shade, shade, ((topOpacity / elevation) * i)));
+            // draw rectangle
             g.drawRect(i, i, this.getWidth() - ((i * 2) + 1), this.getHeight() - ((i * 2) + 1));
         }
     }
 
+    // override the mouse clicked function
     @Override
     public void mouseClicked(MouseEvent e) {
         consumer.accept(e);
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+        // do nothing
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+        // do nothing
+    }
 
+    // set the mouse entered events: change the color
     @Override
     public void mouseEntered(MouseEvent e) {
         MyTextCard component = (MyTextCard) e.getComponent();
@@ -141,6 +153,7 @@ public class MyTextCard extends JPanel implements MouseListener {
         t.setTitleColor(hoverBorderColor);
     }
 
+    // set the mouse exited events: change the color
     @Override
     public void mouseExited(MouseEvent e) {
         MyTextCard component = (MyTextCard) e.getComponent();

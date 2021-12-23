@@ -22,7 +22,7 @@ public class Logger {
                   / ____/   / /   / / / /   / __ )         / __ \\  / ___/
                  / /       / /   / / / /   / __  |        / / / /  \\__ \\\s
                 / /___    / /___/ /_/ /   / /_/ /        / /_/ /  ___/ /\s
-                \\____/   /_____/\\____/   /_____/         \\____/  /____/  POWBERED BY JIAQI FU                
+                \\____/   /_____/\\____/   /_____/         \\____/  /____/  POWBERED BY lomofu                
                                    
                                """;
         System.out.println(PURPLE + banner + RESET);

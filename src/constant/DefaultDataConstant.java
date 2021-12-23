@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 
 /**
  * @author lomofu
- * @desc
- * @create 10/Dec/2021 01:41
+ * <p>
+ * This class define two default membership type with fees, courses and path
  */
 public final class DefaultDataConstant {
     public static final Role[] DEFAULT_MEMBERS = {
@@ -25,5 +25,6 @@ public final class DefaultDataConstant {
     public static final String PROMOTION_CSV_PATH = "promotionlist.csv";
     public static final String VISITOR_CSV_PATH = "visitorlist.csv";
 
-    private DefaultDataConstant() {}
+    private DefaultDataConstant() {
+    }
 }

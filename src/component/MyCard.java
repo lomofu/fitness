@@ -6,17 +6,17 @@ import java.awt.*;
 
 /**
  * @author lomofu
- * @desc
- * @create 24/Nov/2021 19:16
+ * <p>
+ * This class defines a border card with a shadow
  */
 public class MyCard extends MyPanel {
-    private final int elevation = 5;
     private final MyPanel contentPanel = new MyPanel();
 
     public MyCard(String title, boolean needItalic) {
         Font font;
         this.setLayout(new GridLayout(1, 1));
         TitledBorder titledBorder = BorderFactory.createTitledBorder(title);
+        // let the title style is Italic or not
         if(needItalic) {
             font = new Font(null, Font.ITALIC, 15);
         } else {
@@ -29,24 +29,34 @@ public class MyCard extends MyPanel {
         this.add(contentPanel);
     }
 
+    /**
+     * This method will let a component be add into the card
+     *
+     * @param component any component
+     */
     public void addC(Component component) {
         this.contentPanel.add(component);
     }
 
+    // set the card size
     public void setCSize(int width, int height) {
         this.setPreferredSize(new Dimension(width, height));
     }
 
-    public void setCLayout(LayoutManager layout) {
-        this.contentPanel.setLayout(layout);
-    }
-
+    /**
+     * This method is used to draw the card shadow
+     *
+     * @param g graphics
+     */
     @Override
     protected void paintComponent(Graphics g) {
         int shade = 0;
         int topOpacity = 70;
-        for(int i = 0; i < elevation; i++) {
-            g.setColor(new Color(shade, shade, shade, ((topOpacity / elevation) * i)));
+        // set shadow elevation
+        int ELEVATION = 5;
+        for(int i = 0; i < ELEVATION; i++) {
+            g.setColor(new Color(shade, shade, shade, ((topOpacity / ELEVATION) * i)));
+            // draw rectangle
             g.drawRect(i, i, this.getWidth() - ((i * 2) + 1), this.getHeight() - ((i * 2) + 1));
         }
     }
