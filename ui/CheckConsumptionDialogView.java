@@ -2,26 +2,26 @@ package ui;
 
 import component.ConsumptionTable;
 import component.MyTable;
+import constant.UIConstant;
 import core.ConsumptionService;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static constant.UIConstant.CONSUMPTION_COLUMNS;
-
 /**
  * @author lomofu
- * @desc
- * @create 11/Dec/2021 06:15
+ * <p>
+ * This class is used to display a particular membership consumption record
  */
 public class CheckConsumptionDialogView extends JDialog {
     private CheckConsumptionDialogView(Frame owner, String memberId) {
         initDialog(owner);
 
         MyTable consumptionTable =
-                new ConsumptionTable((ClubFrameView) owner, "Personal Consumption Table", CONSUMPTION_COLUMNS, ConsumptionService.findConsumptionsByMemberIdForRender(memberId), false);
-        Box verticalBox = Box.createVerticalBox();
+                new ConsumptionTable((ClubFrameView) owner, "Personal Consumption Table", UIConstant.CONSUMPTION_COLUMNS, ConsumptionService.findConsumptionsByMemberIdForRender(memberId), false);
 
+        // Initialize the layout of the table
+        Box verticalBox = Box.createVerticalBox();
         verticalBox.add(consumptionTable.getTitle());
         verticalBox.add(consumptionTable.getjToolBar());
         verticalBox.add(Box.createVerticalStrut(10));
@@ -32,6 +32,14 @@ public class CheckConsumptionDialogView extends JDialog {
 
     }
 
+    /**
+     * This factory method will create a new dialog when select one membership row and click the consumption button on the
+     * see@MemberTable
+     * The same option is also support the right click of one membership row
+     *
+     * @param owner          the parent component
+     * @param memberId
+     */
     public static void showDig(Frame owner, String memberId) {
         CheckConsumptionDialogView dialog = new CheckConsumptionDialogView(owner, memberId);
         dialog.setVisible(true);

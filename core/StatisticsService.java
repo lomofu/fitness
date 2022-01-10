@@ -14,10 +14,16 @@ import java.util.List;
 
 /**
  * @author lomofu
- * @desc
- * @create 12/Dec/2021 04:17
+ * <p>
+ * This class deals with business logic related to data statistics records
  */
 public final class StatisticsService {
+
+    /**
+     * This method get some data statistics
+     *
+     * @return statistics type
+     */
     public static Statistics get() {
         int users = DataSource.getCustomerList().size();
         int visitors = DataSource.getVisitorDtoList()
@@ -41,6 +47,11 @@ public final class StatisticsService {
         return statistics;
     }
 
+    /**
+     * This method is used to calculate the number of active members
+     *
+     * @return the count number of active members
+     */
     public static long calculateActiveUsers() {
         List<CustomerDto> customerList = DataSource.getCustomerList();
         return customerList.stream()
@@ -49,6 +60,11 @@ public final class StatisticsService {
                 .count();
     }
 
+    /**
+     * This method is used to calculate the turnover
+     *
+     * @return the turnover (String type)
+     */
     public static String calculateTurnover() {
         BigDecimal reduce = DataSource.getConsumptionList()
                 .stream()

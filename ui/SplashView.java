@@ -6,13 +6,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author lomofu
- * @desc
- * @create 13/Dec/2021 05:07
+ * <p>
+ * This class sets the welcome panel
  */
 public class SplashView {
     private static final JWindow window = new JWindow();
 
     public static void run() {
+        // set the window size
         Dimension screen = window.getToolkit().getScreenSize();
         ImageIcon imageIcon = new ImageIcon("assets/splash.jpg");
         window.getContentPane().add(
@@ -25,6 +26,7 @@ public class SplashView {
         window.setAlwaysOnTop(true);
     }
 
+    // close this window after one second
     public static void dispose() throws InterruptedException {
         TimeUnit.SECONDS.sleep(1);
         window.setVisible(false);

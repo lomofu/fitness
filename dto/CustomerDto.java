@@ -1,17 +1,16 @@
 package dto;
 
 import utils.DateUtil;
+import utils.StringUtil;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import static utils.StringUtil.escapeSpecialCharacters;
-
 /**
  * @author lomofu
- * @desc
- * @create 28/Nov/2021 23:49
+ * <p>
+ * This class is an extension of customer class
  */
 public class CustomerDto {
     private String id = "";
@@ -31,7 +30,9 @@ public class CustomerDto {
     private String state = "";
     private String parentId = "";
 
-    public CustomerDto() {}
+    public CustomerDto() {
+        // do nothing
+    }
 
     public CustomerDto(CustomerDto customerDto) {
         this.id = customerDto.id;
@@ -52,6 +53,7 @@ public class CustomerDto {
         this.parentId = customerDto.parentId;
     }
 
+    // getter and setter
     public String getId() {
         return id;
     }
@@ -185,13 +187,13 @@ public class CustomerDto {
         return MessageFormat.format(
                 "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}",
                 id,
-                escapeSpecialCharacters(firstName),
-                escapeSpecialCharacters(lastName),
+                StringUtil.escapeSpecialCharacters(firstName),
+                StringUtil.escapeSpecialCharacters(lastName),
                 DateUtil.format(dateOfBirth),
                 gender,
-                escapeSpecialCharacters(homeAddress),
+                StringUtil.escapeSpecialCharacters(homeAddress),
                 phoneNumber,
-                escapeSpecialCharacters(healthCondition),
+                StringUtil.escapeSpecialCharacters(healthCondition),
                 roleDto.getRoleId(),
                 DateUtil.format(startDate),
                 duration,
@@ -201,6 +203,9 @@ public class CustomerDto {
                 state);
     }
 
+    /**
+     * The builder design pattern help to build an object in an elegant way
+     */
     public static class Builder {
         private CustomerDto customerDto;
 

@@ -11,12 +11,14 @@ import java.util.Optional;
 
 /**
  * @author lomofu
- * @desc
- * @create 11/Dec/2021 21:56
+ * <p>
+ * This class is used to display a particular membership role information
  */
 public class CheckRoleDialogView extends JDialog {
+    // define the default gap for each component in the layout
     private static final int X_GAP = 20;
     private static final int Y_GAP = 20;
+
     private final JLabel roleIdLabel = new JLabel("Role ID");
     private final JLabel roleNameLabel = new JLabel("Role Name");
     private final JLabel feesOf1MonthLabel = new JLabel("Fees of 1 Month");
@@ -41,7 +43,6 @@ public class CheckRoleDialogView extends JDialog {
     private final JButton close = new JButton("Close");
     private final SpringLayout springLayout = new SpringLayout();
 
-    private Frame owner;
 
     public CheckRoleDialogView(Frame owner, String id) {
         initDialogSetting(owner);
@@ -53,15 +54,27 @@ public class CheckRoleDialogView extends JDialog {
         this.add(panel);
     }
 
+    /**
+     * This factory method will create a new dialog when right click one membership row on the
+     * see@MemberTable
+     *
+     * @param owner parent component
+     * @param id    selected member id
+     */
     public static void showDig(Frame owner, String id) {
-        if(checkData(id))
+        if (checkData(id))
             return;
         CheckRoleDialogView checkRoleDialogView = new CheckRoleDialogView(owner, id);
         checkRoleDialogView.setVisible(true);
     }
 
+    /**
+     * This method will check if the role of the selected member existed
+     *
+     * @param id
+     */
     private static boolean checkData(String id) {
-        if(id == null || "".equals(id)) {
+        if (id == null || "".equals(id)) {
             JOptionPane.showMessageDialog(
                     null, """
                             This member do not have a role!
@@ -73,7 +86,7 @@ public class CheckRoleDialogView extends JDialog {
             return true;
         }
         Optional<RoleDto> op = RoleService.findRoleDtoByIdOp(id);
-        if(op.isEmpty()) {
+        if (op.isEmpty()) {
             JOptionPane.showMessageDialog(
                     null, "Can not find this role!", "Error", JOptionPane.ERROR_MESSAGE);
             return true;
@@ -88,9 +101,9 @@ public class CheckRoleDialogView extends JDialog {
         this.setPreferredSize(new Dimension(550, 650));
         this.setResizable(true);
         this.setLocationRelativeTo(owner);
-        this.owner = owner;
     }
 
+    // set the format of some components
     private void initFormElements() {
         roleIdTextField.setEditable(false);
         roleIdTextField.setFocusable(false);
@@ -113,7 +126,11 @@ public class CheckRoleDialogView extends JDialog {
         myCard.addC(courseTextScrollPane);
     }
 
-
+    /**
+     * This method will find the relevant information based on the role ID to be displayed in the corresponding component
+     *
+     * @param roleId role id
+     */
     private void bindData(String roleId) {
         RoleDto roleDto = RoleService.findRoleDtoByIdOp(roleId).get();
         roleIdTextField.setText(roleDto.getRoleId());
@@ -131,6 +148,8 @@ public class CheckRoleDialogView extends JDialog {
         JPanel panel = new JPanel(springLayout);
 
         initSpringLayout(panel);
+
+        // add the components to the panel
         panel.add(roleIdLabel);
         panel.add(roleNameLabel);
         panel.add(feesOf1MonthLabel);
@@ -155,10 +174,15 @@ public class CheckRoleDialogView extends JDialog {
     }
 
     private void initSpringLayout(JPanel panel) {
-        Spring childWidth = Spring.sum(Spring.sum(Spring.width(roleIdLabel), Spring.width(roleIdTextField)),
-                Spring.constant(X_GAP));
+        // use the Spring to calculate the width of the roleIdLabel + roleIdTextField + const X_GAP (20)
+        Spring childWidth =
+                Spring.sum(
+                        Spring.sum(Spring.width(roleIdLabel), Spring.width(roleIdTextField)),
+                        Spring.constant(X_GAP));
 
+        // pack the first row
         initRoleIdRow(panel, childWidth);
+
         initChildRow(roleIdLabel, roleNameLabel, roleNameTextField);
         initChildRow(roleNameLabel, feesOf1MonthLabel, feesOf1MonthTextField);
         initChildRow(feesOf1MonthLabel, feesOf3MonthLabel, feesOf3MonthTextField);
@@ -167,6 +191,7 @@ public class CheckRoleDialogView extends JDialog {
         initChildRow(feesOf12MonthLabel, gymLabel, gymCheckBox);
         initChildRow(gymLabel, swimmingPoolLabel, swimmingPoolCheckBox);
 
+        // use the spring layout to put constraint
         springLayout.putConstraint(SpringLayout.WEST, myCard, 0, SpringLayout.WEST, feesOf12MonthLabel);
         springLayout.putConstraint(SpringLayout.EAST, myCard, 0, SpringLayout.EAST, roleIdTextField);
         springLayout.putConstraint(SpringLayout.NORTH, myCard, Y_GAP, SpringLayout.SOUTH, swimmingPoolCheckBox);
@@ -176,13 +201,21 @@ public class CheckRoleDialogView extends JDialog {
     }
 
     private void initRoleIdRow(JPanel panel, Spring childWidth) {
-        springLayout.putConstraint(SpringLayout.WEST, roleIdLabel, - childWidth.getValue() / 2, SpringLayout.HORIZONTAL_CENTER, panel);
+        // HORIZONTAL_CENTER
+        springLayout.putConstraint(SpringLayout.WEST, roleIdLabel, -childWidth.getValue() / 2, SpringLayout.HORIZONTAL_CENTER, panel);
         springLayout.putConstraint(SpringLayout.NORTH, roleIdLabel, Y_GAP, SpringLayout.NORTH, panel);
 
         springLayout.putConstraint(SpringLayout.NORTH, roleIdTextField, 0, SpringLayout.NORTH, roleIdLabel);
         springLayout.putConstraint(SpringLayout.WEST, roleIdTextField, X_GAP, SpringLayout.EAST, roleIdLabel);
     }
 
+    /**
+     * The function abstract a row with a JLabel and a component (most are the JTextFields)
+     *
+     * @param refer     the reference label
+     * @param label     the label need to put constraint
+     * @param component the component need to put constraint
+     */
     private void initChildRow(JLabel refer, JLabel label, Component component) {
         springLayout.putConstraint(SpringLayout.EAST, label, 0, SpringLayout.EAST, refer);
         springLayout.putConstraint(SpringLayout.NORTH, label, Y_GAP, SpringLayout.SOUTH, refer);
@@ -191,6 +224,9 @@ public class CheckRoleDialogView extends JDialog {
         springLayout.putConstraint(SpringLayout.WEST, component, X_GAP, SpringLayout.EAST, label);
     }
 
+    /**
+     * This function manger the callback events of the components
+     */
     private void initListener() {
         close.addActionListener(__ -> {
             this.dispose();
@@ -198,6 +234,9 @@ public class CheckRoleDialogView extends JDialog {
         });
     }
 
+    /**
+     * This inner class create a render to center the table content
+     */
     private static class CellRenderer extends DefaultListCellRenderer {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);

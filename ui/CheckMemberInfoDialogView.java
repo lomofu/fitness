@@ -11,10 +11,11 @@ import java.util.Optional;
 
 /**
  * @author lomofu
- * @desc
- * @create 11/Dec/2021 03:39
+ * <p>
+ * This class is used to display a particular membership information
  */
 public class CheckMemberInfoDialogView extends JDialog {
+    // define the default gap for each component in the layout
     private static final int X_GAP = 20;
     private static final int Y_GAP = 20;
 
@@ -65,7 +66,7 @@ public class CheckMemberInfoDialogView extends JDialog {
     private CheckMemberInfoDialogView(Frame owner, String id) {
         initDialogSetting(owner);
         boolean flag = bindData(id);
-        if(flag) {
+        if (flag) {
             initFormElements();
             JPanel panel = initPanel();
             initListener();
@@ -75,6 +76,14 @@ public class CheckMemberInfoDialogView extends JDialog {
         }
     }
 
+    /**
+     * This factory method will create a new dialog when double click one membership row on the
+     * see@MemberTable
+     * The same option is also support the right click of one membership row
+     *
+     * @param owner parent component
+     * @param id    member id
+     */
     public static void showDig(Frame owner, String id) {
         CheckMemberInfoDialogView checkMemberInfoDialogView = new CheckMemberInfoDialogView(owner, id);
         checkMemberInfoDialogView.setVisible(true);
@@ -90,9 +99,14 @@ public class CheckMemberInfoDialogView extends JDialog {
         this.owner = owner;
     }
 
+    /**
+     * This method will find the relevant information based on the member ID to be displayed in the corresponding component
+     *
+     * @param id member id
+     */
     private boolean bindData(String id) {
         Optional<CustomerDto> op = MembershipService.findCustomerByIdOp(id);
-        if(op.isEmpty()) {
+        if (op.isEmpty()) {
             JOptionPane.showMessageDialog(
                     this, "Can not find this member!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -104,21 +118,21 @@ public class CheckMemberInfoDialogView extends JDialog {
         lastNameTextField.setText(customerDto.getLastName());
 
         String dateOfBirth = DateUtil.format(customerDto.getDateOfBirth());
-        if("".equals(dateOfBirth)) {
+        if ("".equals(dateOfBirth)) {
             dateOfBirthTextField.setText("No data");
         } else {
             dateOfBirthTextField.setText(dateOfBirth);
         }
 
         String age = String.valueOf(customerDto.getAge());
-        if("".equals(age)) {
+        if ("".equals(age)) {
             yourAgeValue.setText("No data");
         } else {
             yourAgeValue.setText(age);
         }
 
         String homeAddress = customerDto.getHomeAddress();
-        if("".equals(homeAddress)) {
+        if ("".equals(homeAddress)) {
             homeAddressTextField.setText("No data");
         } else {
             homeAddressTextField.setText(homeAddress);
@@ -127,28 +141,28 @@ public class CheckMemberInfoDialogView extends JDialog {
         genderComBox.setText(customerDto.getGender());
 
         String phoneNumber = customerDto.getPhoneNumber();
-        if("".equals(phoneNumber)) {
+        if ("".equals(phoneNumber)) {
             phoneNumberTextField.setText("No data");
         } else {
             phoneNumberTextField.setText(phoneNumber);
         }
 
         String healthCondition = customerDto.getHealthCondition();
-        if("".equals(healthCondition)) {
+        if ("".equals(healthCondition)) {
             healthConditionTextField.setText("No data");
         } else {
             healthConditionTextField.setText(healthCondition);
         }
 
         String roleName = customerDto.getRole().getRoleName();
-        if(roleName == null || "".equals(roleName)) {
+        if (roleName == null || "".equals(roleName)) {
             memberTextField.setText("Lost Info");
         } else {
             memberTextField.setText(roleName);
         }
 
         String parent = customerDto.getParent();
-        if("".equals(parent)) {
+        if ("".equals(parent)) {
             parentIdLabel.setVisible(false);
             parentIdValue.setVisible(false);
         } else {
@@ -156,28 +170,28 @@ public class CheckMemberInfoDialogView extends JDialog {
         }
 
         String startDate = DateUtil.format(customerDto.getStartDate());
-        if("".equals(startDate)) {
+        if ("".equals(startDate)) {
             startDateTextField.setText("No data");
         } else {
             startDateTextField.setText(startDate);
         }
 
         String duration = String.valueOf(customerDto.getDuration());
-        if("".equals(duration)) {
+        if ("".equals(duration)) {
             durationComboBox.setText("No data");
         } else {
             durationComboBox.setText(duration);
         }
 
         String expireTime = DateUtil.format(customerDto.getExpireTime());
-        if("".equals(expireTime)) {
+        if ("".equals(expireTime)) {
             expireTimeValue.setText("No data");
         } else {
             expireTimeValue.setText(expireTime);
         }
 
         String fees = customerDto.getFees().toString();
-        if("".equals(fees)) {
+        if ("".equals(fees)) {
             membershipFeesValue.setText("No data");
         } else {
             membershipFeesValue.setText(fees);
@@ -185,7 +199,7 @@ public class CheckMemberInfoDialogView extends JDialog {
         return true;
     }
 
-
+    // set the format of some components
     private void initFormElements() {
         edit.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
         close.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
@@ -195,7 +209,10 @@ public class CheckMemberInfoDialogView extends JDialog {
     private JPanel initPanel() {
         initComponentsSetting();
         JPanel panel = new JPanel(springLayout);
+
         initSpringLayout(panel);
+
+        // add the components to the panel
         panel.add(memberIdLabel);
         panel.add(firstNameLabel);
         panel.add(lastNameLabel);
@@ -223,6 +240,9 @@ public class CheckMemberInfoDialogView extends JDialog {
 
     }
 
+    /**
+     * change some style of components in the form
+     */
     private void initComponentsSetting() {
         healthConditionTextField.setLineWrap(true);
         healthConditionTextField.setWrapStyleWord(true);
@@ -256,6 +276,7 @@ public class CheckMemberInfoDialogView extends JDialog {
     }
 
     private void initMemberInfoCard() {
+        // use box for layout
         Box box = getHBox(membershipLabel, memberTextField);
         Box box1 = getHBox(startDateLabel, startDateTextField);
         Box box2 = getHBox(durationDateLabel, durationComboBox);
@@ -276,17 +297,22 @@ public class CheckMemberInfoDialogView extends JDialog {
         verticalBox.add(Box.createVerticalStrut(10));
         verticalBox.add(box5);
 
+        // use the Spring to calculate the width of the phoneNumberLabel + healthConditionTextField + const X_GAP (20)
         int myCardWidth =
                 Spring.sum(Spring.sum(Spring.width(phoneNumberLabel), Spring.width(healthConditionTextField)),
-                                Spring.constant(X_GAP))
-                        .getValue();
+                        Spring.constant(X_GAP)).getValue();
+        // use the Spring to calculate the height of the verticalBox + const Y_GAP (20) * 3
         int myCardHeight =
                 Spring.sum(Spring.height(verticalBox), Spring.constant(Y_GAP * 3)).getValue();
 
+        // set the myCard height and width
         myCard.setCSize(myCardWidth, myCardHeight);
         myCard.addC(verticalBox);
     }
 
+    /**
+     * this function will create a HorizontalBox filled with two labels
+     */
     private Box getHBox(JLabel label, JLabel value) {
         Box box = Box.createHorizontalBox();
         box.add(label);
@@ -296,11 +322,13 @@ public class CheckMemberInfoDialogView extends JDialog {
     }
 
     private void initSpringLayout(JPanel panel) {
+        // use the Spring to calculate the width of the memberIdLabel + JTextField + const X_GAP (20)
         Spring childWidth =
                 Spring.sum(
                         Spring.sum(Spring.width(memberIdLabel), Spring.width(new JTextField(20))),
                         Spring.constant(X_GAP));
 
+        // pack the first row
         initMemberIdRow(panel, childWidth);
 
         initChildRow(memberIdLabel, firstNameLabel, firstNameTextField);
@@ -316,6 +344,7 @@ public class CheckMemberInfoDialogView extends JDialog {
                 healthConditionLabel,
                 jScrollPaneWithHealthCondition);
 
+        // use the spring layout to put constraint
         springLayout.putConstraint(SpringLayout.WEST, myCard, 0, SpringLayout.WEST, phoneNumberLabel);
         springLayout.putConstraint(SpringLayout.NORTH, myCard, 0, SpringLayout.EAST, healthConditionTextField);
         springLayout.putConstraint(SpringLayout.NORTH, myCard, Y_GAP, SpringLayout.SOUTH, jScrollPaneWithHealthCondition);
@@ -329,12 +358,8 @@ public class CheckMemberInfoDialogView extends JDialog {
 
     private void initMemberIdRow(JPanel panel, Spring childWidth) {
         // HORIZONTAL_CENTER
-        springLayout.putConstraint(
-                SpringLayout.WEST,
-                memberIdLabel,
-                - childWidth.getValue() / 2,
-                SpringLayout.HORIZONTAL_CENTER,
-                panel);
+        springLayout.putConstraint(SpringLayout.WEST, memberIdLabel, -childWidth.getValue() / 2,
+                SpringLayout.HORIZONTAL_CENTER,panel);
         springLayout.putConstraint(SpringLayout.NORTH, memberIdLabel, Y_GAP, SpringLayout.NORTH, panel);
 
         springLayout.putConstraint(
@@ -343,24 +368,44 @@ public class CheckMemberInfoDialogView extends JDialog {
                 SpringLayout.WEST, memberIDTextField, X_GAP, SpringLayout.EAST, memberIdLabel);
     }
 
+    /**
+     * The function abstract a row with a JLabel and a component (most are the JTextFields)
+     *
+     * @param refer     the reference label
+     * @param label     the label need to put constraint
+     * @param component the component need to put constraint
+     */
     private void initChildRow(JLabel refer, JLabel label, Component component) {
-        // align with refer
+        // let the label align to refer
         springLayout.putConstraint(SpringLayout.EAST, label, 0, SpringLayout.EAST, refer);
         springLayout.putConstraint(SpringLayout.NORTH, label, Y_GAP, SpringLayout.SOUTH, refer);
-
+        // let the component align to label
         springLayout.putConstraint(SpringLayout.NORTH, component, 0, SpringLayout.NORTH, label);
         springLayout.putConstraint(SpringLayout.WEST, component, X_GAP, SpringLayout.EAST, label);
     }
 
+    /**
+     * The function covers the component with multi-row (like the JTextArea) and seems to the see@initChildRow
+     *
+     * @param referLab  the reference label
+     * @param refer     the reference component
+     * @param label     the label need to put constraint
+     * @param component the component need to put constraint
+     */
     private void initChildMultiRow(
             JLabel referLab, Component refer, JLabel label, Component component) {
+        // let the component align to refer
         springLayout.putConstraint(SpringLayout.NORTH, component, Y_GAP, SpringLayout.SOUTH, refer);
         springLayout.putConstraint(SpringLayout.WEST, component, 0, SpringLayout.WEST, refer);
 
+        // let the label align to component and referLab
         springLayout.putConstraint(SpringLayout.NORTH, label, 0, SpringLayout.NORTH, component);
         springLayout.putConstraint(SpringLayout.EAST, label, 0, SpringLayout.EAST, referLab);
     }
 
+    /**
+     * This function manger all the callback events of the components
+     */
     private void initListener() {
         close.addActionListener(__ -> this.dispose());
         edit.addActionListener(__ -> {

@@ -7,8 +7,8 @@ import java.util.Objects;
 
 /**
  * @author lomofu
- * @desc
- * @create 12/Dec/2021 18:43
+ * <p>
+ * This class is an extension of visitor class
  */
 public class VisitorDto {
     private Date date = new Date();
@@ -30,11 +30,12 @@ public class VisitorDto {
         this.count = count;
     }
 
+    // override the method of equals
     @Override
     public boolean equals(Object o) {
-        if(this == o)
+        if (this == o)
             return true;
-        if(o == null || getClass() != o.getClass())
+        if (o == null || getClass() != o.getClass())
             return false;
         VisitorDto that = (VisitorDto) o;
         return count == that.count && Objects.equals(date, that.date);

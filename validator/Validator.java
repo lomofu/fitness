@@ -2,9 +2,9 @@ package validator;
 
 /**
  * @author lomofu
- * @desc
- * @create 08/Dec/2021 15:20
+ * <p>
+ * This interface defines the method of validate
  */
 public interface Validator {
-  String valid();
+    String valid();
 }

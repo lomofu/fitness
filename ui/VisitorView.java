@@ -2,26 +2,28 @@ package ui;
 
 import component.MyTable;
 import component.VisitorTable;
+import constant.UIConstant;
 import core.VisitorService;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static constant.UIConstant.VISITOR_COLUMNS;
-import static constant.UIConstant.VISITOR_SEARCH_FILTER_COLUMNS;
-
 /**
  * @author lomofu
- * @desc
- * @create 12/Dec/2021 18:56
+ * <p>
+ * This class sets the layout and the components of the visitor panel
  */
 public class VisitorView extends JPanel {
     public VisitorView(ClubFrameView clubFrameView) {
         super(new BorderLayout());
-        MyTable visitorTable =
-                new VisitorTable(clubFrameView, "Visitor Table", VISITOR_COLUMNS, VisitorService.findVisitorsForTableRender(), VISITOR_SEARCH_FILTER_COLUMNS);
-        Box verticalBox = Box.createVerticalBox();
 
+        // init the visitor table
+        MyTable visitorTable =
+                new VisitorTable(clubFrameView, "Visitor Table", UIConstant.VISITOR_COLUMNS,
+                        VisitorService.findVisitorsForTableRender(), UIConstant.VISITOR_SEARCH_FILTER_COLUMNS);
+
+        // set the layout of the panel
+        Box verticalBox = Box.createVerticalBox();
         verticalBox.add(visitorTable.getTitle());
         verticalBox.add(visitorTable.getjToolBar());
         verticalBox.add(Box.createVerticalStrut(10));
